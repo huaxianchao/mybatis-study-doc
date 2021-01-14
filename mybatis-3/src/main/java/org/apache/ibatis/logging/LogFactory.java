@@ -21,6 +21,7 @@ import java.lang.reflect.Constructor;
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
+//日志工厂
 public final class LogFactory {
 
   /**
@@ -30,7 +31,9 @@ public final class LogFactory {
 
   private static Constructor<? extends Log> logConstructor;
 
+  //静态代码块中实现初始化
   static {
+    //尝试使用Slf4j
     tryImplementation(new Runnable() {
       @Override
       public void run() {
@@ -69,6 +72,7 @@ public final class LogFactory {
     });
   }
 
+  //私有化构造方法
   private LogFactory() {
     // disable construction
   }
@@ -127,6 +131,7 @@ public final class LogFactory {
     }
   }
 
+  //设置日志实现类
   private static void setImplementation(Class<? extends Log> implClass) {
     try {
       Constructor<? extends Log> candidate = implClass.getConstructor(new Class[] { String.class });

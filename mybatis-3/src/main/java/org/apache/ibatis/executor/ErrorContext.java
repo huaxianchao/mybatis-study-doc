@@ -20,7 +20,9 @@ package org.apache.ibatis.executor;
  */
 public class ErrorContext {
 
+  //行号分隔符
   private static final String LINE_SEPARATOR = System.getProperty("line.separator","\n");
+  //绑定到ThreadLocal<>，只在当前线程使用的时候，是线程安全的，但是这样在并发的情况下就不是单例的了
   private static final ThreadLocal<ErrorContext> LOCAL = new ThreadLocal<ErrorContext>();
 
   private ErrorContext stored;
@@ -30,10 +32,11 @@ public class ErrorContext {
   private String message;
   private String sql;
   private Throwable cause;
-
+  //私有化构造方法
   private ErrorContext() {
   }
 
+  //共有的获取instance实例的方法，因为使用ThreadLocal<>修饰，所以不用考虑并发问题
   public static ErrorContext instance() {
     ErrorContext context = LOCAL.get();
     if (context == null) {

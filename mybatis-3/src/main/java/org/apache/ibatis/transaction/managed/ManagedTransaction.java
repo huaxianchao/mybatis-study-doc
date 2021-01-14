@@ -26,7 +26,7 @@ import org.apache.ibatis.session.TransactionIsolationLevel;
 import org.apache.ibatis.transaction.Transaction;
 
 /**
- * {@link Transaction} that lets the container manage the full lifecycle of the transaction.
+ * {@link org.apache.ibatis.transaction.Transaction} that lets the container manage the full lifecycle of the transaction.
  * Delays connection retrieval until getConnection() is called.
  * Ignores all commit or rollback requests.
  * By default, it closes the connection but can be configured not to do it.
@@ -36,13 +36,21 @@ import org.apache.ibatis.transaction.Transaction;
 /**
  * @author Clinton Begin
  */
+  //让容器管理事务的全部生命周期
+  //延迟恢复连接，在getConnection方法被调用的时候才恢复
+  //忽略所有commit和rollback请求
+  //默认情况下，会自动关闭连接，但是可以通过配置修改
 public class ManagedTransaction implements Transaction {
 
   private static final Log log = LogFactory.getLog(ManagedTransaction.class);
 
+  //数据源
   private DataSource dataSource;
+  //事务的隔离级别
   private TransactionIsolationLevel level;
+  //数据库连接
   private Connection connection;
+  //是否关闭连接
   private boolean closeConnection;
 
   public ManagedTransaction(Connection connection, boolean closeConnection) {
@@ -64,32 +72,40 @@ public class ManagedTransaction implements Transaction {
     return this.connection;
   }
 
+  //提交，实际并未提交，因为交给容器管理
   @Override
   public void commit() throws SQLException {
     // Does nothing
   }
 
+  //回滚，实际并未回滚，因为交给容器管理
   @Override
   public void rollback() throws SQLException {
     // Does nothing
   }
 
+  //关闭当前所持有的数据库连接
   @Override
   public void close() throws SQLException {
+    //若当前的属性closeConnection=true 且 当前持有的连接不为空
     if (this.closeConnection && this.connection != null) {
       if (log.isDebugEnabled()) {
         log.debug("Closing JDBC Connection [" + this.connection + "]");
       }
+      //关闭连接
       this.connection.close();
     }
   }
 
+  //打开连接
   protected void openConnection() throws SQLException {
     if (log.isDebugEnabled()) {
       log.debug("Opening JDBC Connection");
     }
     this.connection = this.dataSource.getConnection();
+    //若属性-事务隔离级别 不为空
     if (this.level != null) {
+      //设置该连接的事务隔离级别
       this.connection.setTransactionIsolation(this.level.getLevel());
     }
   }
