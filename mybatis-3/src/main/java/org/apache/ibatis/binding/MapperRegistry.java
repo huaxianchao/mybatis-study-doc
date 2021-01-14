@@ -31,9 +31,11 @@ import java.util.Set;
  * @author Eduardo Macarron
  * @author Lasse Voss
  */
+//mapper注册器
 public class MapperRegistry {
 
   private final Configuration config;
+  //HashMap，key为Mapper接口的class，value为对应的MapperProxyFactory(mapper代理工厂)
   private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<Class<?>, MapperProxyFactory<?>>();
 
   public MapperRegistry(Configuration config) {
@@ -57,21 +59,28 @@ public class MapperRegistry {
     return knownMappers.containsKey(type);
   }
 
+  //注册mapper，实际是把mapper放到hashMap属性里面
   public <T> void addMapper(Class<T> type) {
+    //mapper必须是接口类型
     if (type.isInterface()) {
+      //若该Mapper已经注册过，抛出异常
       if (hasMapper(type)) {
         throw new BindingException("Type " + type + " is already known to the MapperRegistry.");
       }
+      //设置一个注册完毕的标识
       boolean loadCompleted = false;
       try {
+        //put到hashMap中
         knownMappers.put(type, new MapperProxyFactory<T>(type));
         // It's important that the type is added before the parser is run
         // otherwise the binding may automatically be attempted by the
         // mapper parser. If the type is already known, it won't try.
         MapperAnnotationBuilder parser = new MapperAnnotationBuilder(config, type);
         parser.parse();
+        //设置注册完毕的标识为true
         loadCompleted = true;
       } finally {
+        //根据标识判断，若放入hashMap中后出现其他异常，导致注册未完成，从hashMap中删除当前已经放入的数据
         if (!loadCompleted) {
           knownMappers.remove(type);
         }

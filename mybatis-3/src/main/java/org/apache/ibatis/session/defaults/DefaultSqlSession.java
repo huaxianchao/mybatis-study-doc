@@ -45,10 +45,13 @@ import org.apache.ibatis.session.SqlSession;
  */
 public class DefaultSqlSession implements SqlSession {
 
+  //当前环境
   private Configuration configuration;
+  //执行器
   private Executor executor;
-
+  //自动提交，不传入默认为false
   private boolean autoCommit;
+  //脏，不传入默认false
   private boolean dirty;
 
   public DefaultSqlSession(Configuration configuration, Executor executor, boolean autoCommit) {
@@ -67,6 +70,13 @@ public class DefaultSqlSession implements SqlSession {
     return this.<T>selectOne(statement, null);
   }
 
+  /**查询一条，实际是调用的selectList再对结果集判断，若查询出0条，返回null，若查询出多条，抛出异常
+   * @Author: xianchao.hua
+   * @Date: 2021/1/14 13:35
+   * @param: statement
+   * @param: parameter
+   * @Return: T
+   */ 
   @Override
   public <T> T selectOne(String statement, Object parameter) {
     // Popular vote was to return null on 0 results and throw exception on too many.
@@ -246,6 +256,7 @@ public class DefaultSqlSession implements SqlSession {
   }
 
   @Override
+  //传入接口对应的class对象，获取该mapper接口的代理对象
   public <T> T getMapper(Class<T> type) {
     return configuration.<T>getMapper(type, this);
   }

@@ -1,3 +1,6 @@
+import com.hy.FirstCacheExector;
+import com.hy.VO.User;
+import com.hy.mapper.UserMapper;
 import org.apache.ibatis.executor.*;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -38,7 +41,7 @@ public class DebugMainTest {
     }
 
     @Test
-    public void testSimpleExector() throws SQLException {
+    public void testSimpleExecutor() throws SQLException {
         SimpleExecutor executor = new SimpleExecutor(configuration, new ManagedTransaction(connection, true));
         //执行两次查询--直接调用SimpleExector的doQuery方法，所以不涉及缓存，相同的Sql被预编译两次，执行两次
         List<Object> result1 = executor.doQuery(getByIdStatement, 2, RowBounds.DEFAULT, null, null);
@@ -48,7 +51,7 @@ public class DebugMainTest {
     }
 
     @Test
-    public void testReuseExector() throws SQLException {
+    public void testReuseExecutor() throws SQLException {
         ReuseExecutor executor = new ReuseExecutor(configuration, new ManagedTransaction(connection, true));
         //执行两次查询--直接调用ReuseExector的doQuery方法，所以不涉及缓存，相同的Sql被预编译一次，执行两次
         List<Object> result1 = executor.doQuery(getByIdStatement, 2, RowBounds.DEFAULT, null, null);
@@ -58,7 +61,7 @@ public class DebugMainTest {
     }
 
     @Test
-    public void testBatchExector1() throws SQLException {
+    public void testBatchExecutor1() throws SQLException {
         BatchExecutor executor = new BatchExecutor(configuration, new ManagedTransaction(connection, true));
         //执行两次查询--直接调用BatchExector的doQuery方法，所以不涉及缓存，相同的Sql被预编译两次，执行两次，未起到批处理的效果
         //说明-批处理只对update操作有效，对查询语句无效
@@ -69,22 +72,23 @@ public class DebugMainTest {
     }
 
     @Test
-    public void testBatchExector2() throws SQLException {
+    public void testBatchExecutor2() throws SQLException {
         BatchExecutor executor = new BatchExecutor(configuration, new ManagedTransaction(connection, true));
         //执行两次查询--直接调用BatchExector的doQuery方法，所以不涉及缓存，相同的Sql被预编译一次
         com.hy.VO.User user = new com.hy.VO.User();
         user.setId(2);
-        user.setName("name2");
+        user.setName("南岐dd");
+        user.setAge(20);
         executor.doUpdate(updateStatement, user);
         executor.doUpdate(updateStatement, user);
         //但是此时 数据库查看更新结果发现数据并没有被更新成功
-        //说明，batch执行更新操作需要显式提交
+        //说明：batch执行更新操作需要显式提交
         executor.commit(true);
     }
 
     //二级缓存
     @Test
-    public void testCachExector() throws SQLException {
+    public void testCachExecutor() throws SQLException {
         SimpleExecutor simpleExecutor = new SimpleExecutor(configuration, new ManagedTransaction(connection, true));
         CachingExecutor cachingExecutor = new CachingExecutor(simpleExecutor);
         cachingExecutor.query(getByIdStatement, 2, RowBounds.DEFAULT, null);
@@ -92,5 +96,29 @@ public class DebugMainTest {
         cachingExecutor.query(getByIdStatement, 2, RowBounds.DEFAULT, null);
         cachingExecutor.query(getByIdStatement, 2, RowBounds.DEFAULT, null);
         cachingExecutor.query(getByIdStatement, 2, RowBounds.DEFAULT, null);
+    }
+
+    //测试自定义的 使用装饰器模式的一级缓存
+    @Test
+    public void testSefDefineFirstCacheExecutor() throws SQLException {
+        SimpleExecutor simpleExecutor = new SimpleExecutor(configuration, new ManagedTransaction(connection, true));
+        FirstCacheExector firstCacheExector = new FirstCacheExector(configuration, new ManagedTransaction(connection, true), simpleExecutor);
+        firstCacheExector.query(getByIdStatement, 2, RowBounds.DEFAULT, null);
+        firstCacheExector.query(getByIdStatement, 2, RowBounds.DEFAULT, null);
+        firstCacheExector.query(getByIdStatement, 2, RowBounds.DEFAULT, null);
+        firstCacheExector.query(getByIdStatement, 2, RowBounds.DEFAULT, null);
+    }
+
+
+    @Test
+    public void testSqlsessionQuery() {
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+        User user = new User();
+        user.setId(2);
+        user.setName("南岐");
+        mapper.update(user);
+        //说明：必须提交才能在数据库中见到更新结果
+        sqlSession.commit();
     }
 }

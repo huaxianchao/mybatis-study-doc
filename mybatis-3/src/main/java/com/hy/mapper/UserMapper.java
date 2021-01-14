@@ -13,6 +13,6 @@ public interface UserMapper {
 
     public User getById(int id);
 
-    @Update("update user set name = #{name} where id = #{id}")
+    @Update("update user set name = #{name},age = #{age} where id = #{id}")
     public void update(User user);
 }

@@ -142,6 +142,7 @@ public class Configuration {
   protected ObjectFactory objectFactory = new DefaultObjectFactory();
   // 对象包装器工厂,主要用来在创建非原生对象,比如增加了某些监控或者特殊属性的代理类
   protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
+  //mapper注册器
   protected MapperRegistry mapperRegistry = new MapperRegistry(this);
   // 延迟加载的全局开关。当开启时，所有关联对象都会延迟加载。特定关联关系中可通过设置fetchType属性来覆盖该项的开关状态。
   protected boolean lazyLoadingEnabled = false;
@@ -165,7 +166,7 @@ public class Configuration {
   // 类型注册器, 用于在执行sql语句的出入参映射以及mybatis-config文件里的各种配置比如<transactionManager type="JDBC"/><dataSource type="POOLED">时使用简写
   protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
   protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
-
+  //缓存MappedStatement的Map，key->MappedStatement的id，value->MappedStatement
   protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection");
   protected final Map<String, Cache> caches = new StrictMap<Cache>("Caches collection");
   protected final Map<String, ResultMap> resultMaps = new StrictMap<ResultMap>("Result Maps collection");
@@ -634,6 +635,7 @@ public class Configuration {
     return parameterMaps.containsKey(id);
   }
 
+  //把MappedStatement加入缓存Map，
   public void addMappedStatement(MappedStatement ms) {
     mappedStatements.put(ms.getId(), ms);
   }
@@ -843,11 +845,16 @@ public class Configuration {
       if (containsKey(key)) {
         throw new IllegalArgumentException(name + " already contains value for " + key);
       }
+      //若传入的key中包含字符 .
       if (key.contains(".")) {
+        //获取截取后的简短字符串
         final String shortKey = getShortName(key);
+        //若从Map中get简短字符串结果为空
         if (super.get(shortKey) == null) {
+          //调用hashMap的put方法，key+value
           super.put(shortKey, value);
         } else {
+          //若不为空，调用hashMap的put方法，key+ 使用Ambiguity包装了一层的Key，强制转换类型成方法泛型V
           super.put(shortKey, (V) new Ambiguity(shortKey));
         }
       }
@@ -866,6 +873,7 @@ public class Configuration {
       return value;
     }
 
+    //把传入的字符串用.分隔，取分隔后的数组中最后一部分
     private String getShortName(String key) {
       final String[] keyparts = key.split("\\.");
       return keyparts[keyparts.length - 1];

@@ -53,9 +53,10 @@ import org.apache.ibatis.type.TypeHandler;
  * @author Clinton Begin
  */
 public class MapperBuilderAssistant extends BaseBuilder {
-
+  //当前命名空间
   private String currentNamespace;
   private String resource;
+  //当前缓存
   private Cache currentCache;
   private boolean unresolvedCacheRef; // issue #676
 

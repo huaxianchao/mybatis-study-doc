@@ -3,8 +3,8 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hy.mapper.UserMapper">
-    <!--开启二级缓存-->
-    <cache></cache>
+    <!--二级缓存的缓存空间，若不添加则二级缓存不会生效-->
+   <!-- <cache></cache>-->
     <select id="getById" resultType="com.hy.VO.User">
     select * from user where id = #{id}
   </select>

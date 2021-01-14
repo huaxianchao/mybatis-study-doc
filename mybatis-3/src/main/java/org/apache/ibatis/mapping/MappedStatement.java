@@ -31,9 +31,11 @@ import org.apache.ibatis.session.Configuration;
 /**
  * @author Clinton Begin
  */
+//每个对象对应xml配置文件的一个select/insert/update..节点
 public final class MappedStatement {
-
+  //配置文件名
   private String resource;
+  //全局配置
   private Configuration configuration;
   private String id;
   private Integer fetchSize;
@@ -44,11 +46,17 @@ public final class MappedStatement {
   private Cache cache;
   private ParameterMap parameterMap;
   private List<ResultMap> resultMaps;
+  //执行前是否刷新缓存
   private boolean flushCacheRequired;
+  //是否使用缓存
   private boolean useCache;
+  //是否对结果进行排序
   private boolean resultOrdered;
+  //对应的SQL语句节点类型，注意是节点类型，不是具体的SQL类型，即使@Update里面写的是Select语句，也会被解析成UPDATE类型
   private SqlCommandType sqlCommandType;
+  //主键生成策略（自动生成）
   private KeyGenerator keyGenerator;
+  //主键生成策略对应的列名
   private String[] keyProperties;
   private String[] keyColumns;
   private boolean hasNestedResultMaps;
@@ -56,12 +64,16 @@ public final class MappedStatement {
   private Log statementLog;
   private LanguageDriver lang;
   private String[] resultSets;
-
+    //禁用构造方法
   MappedStatement() {
     // constructor disabled
   }
 
+  /**
+   *在{@link org.apache.ibatis.builder.MapperBuilderAssistant 中使用}
+   */
   public static class Builder {
+      //MappedStatement的构建方法被禁用了，这里使用创建者模式，通过Builder类创建并未属性赋值
     private MappedStatement mappedStatement = new MappedStatement();
 
     public Builder(Configuration configuration, String id, SqlSource sqlSource, SqlCommandType sqlCommandType) {
@@ -172,7 +184,7 @@ public final class MappedStatement {
       mappedStatement.resultSets = delimitedStringtoArray(resultSet);
       return this;
     }
-    
+
     public MappedStatement build() {
       assert mappedStatement.configuration != null;
       assert mappedStatement.id != null;
@@ -274,7 +286,7 @@ public final class MappedStatement {
   public String[] getResulSets() {
     return resultSets;
   }
-  
+
   public BoundSql getBoundSql(Object parameterObject) {
     BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
     List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();

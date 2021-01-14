@@ -27,11 +27,14 @@ import org.apache.ibatis.session.SqlSession;
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
+//Mapper方法代理，基于jdk的动态代理
 public class MapperProxy<T> implements InvocationHandler, Serializable {
 
   private static final long serialVersionUID = -6424540398559729838L;
   private final SqlSession sqlSession;
   private final Class<T> mapperInterface;
+  //方法缓存Map，key->mapper方法，value->包装并解析的MapperMethod方法
+  //  因为Mapper方法解析包装成对应MapperMethod对象也很复杂耗时，所以做成了缓存
   private final Map<Method, MapperMethod> methodCache;
 
   public MapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map<Method, MapperMethod> methodCache) {
@@ -39,6 +42,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     this.mapperInterface = mapperInterface;
     this.methodCache = methodCache;
   }
+
 
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -49,16 +53,26 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
         throw ExceptionUtil.unwrapThrowable(t);
       }
     }
+    //这里根据mapper接口的方法从缓存的Map中获取MapperMethod方法，若第一次调用，则根据Mapper对象生成MapperMethod对象并放入缓存
     final MapperMethod mapperMethod = cachedMapperMethod(method);
+    //调用实际的MapperMethod对象的方法
     return mapperMethod.execute(sqlSession, args);
   }
 
+  /**根据Mapper方法从缓存Map中获取对应的MapperMethod方法
+   *  若未获取到，则把method包装成MappedMethod对象并存入缓存Map中
+   * @param: method
+   * @Return: org.apache.ibatis.binding.MapperMethod
+   */
   private MapperMethod cachedMapperMethod(Method method) {
+    //先从methodCache中获取，查看该方法是否已经缓存
     MapperMethod mapperMethod = methodCache.get(method);
     if (mapperMethod == null) {
+      //若获取结果为空，将参数的Method对象包装成MapperMethod对象并存放到methodCache中
       mapperMethod = new MapperMethod(mapperInterface, method, sqlSession.getConfiguration());
       methodCache.put(method, mapperMethod);
     }
+    //返回参数包装成mapperMethod的对象
     return mapperMethod;
   }
 
