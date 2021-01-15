@@ -32,10 +32,16 @@ import org.apache.ibatis.transaction.TransactionFactory;
 /**
  * @author Clinton Begin
  */
+//managedTransaction工厂，用于生产ManagedTransaction实例
 public class ManagedTransactionFactory implements TransactionFactory {
 
+  //是否关闭连接，默认为true
   private boolean closeConnection = true;
 
+  /**根据参数设置closeConnection属性，默认为true
+   * @param: props
+   * @Return: void
+   */ 
   @Override
   public void setProperties(Properties props) {
     if (props != null) {

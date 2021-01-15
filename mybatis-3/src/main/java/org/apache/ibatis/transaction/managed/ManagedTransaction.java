@@ -51,6 +51,7 @@ public class ManagedTransaction implements Transaction {
   //数据库连接
   private Connection connection;
   //是否关闭连接
+  // 在通过ManagedTransactionFactory创建实例时若未赋值则会被赋值为true(ManagedTransactionFactory定义了该字段并默认为true)
   private boolean closeConnection;
 
   public ManagedTransaction(Connection connection, boolean closeConnection) {

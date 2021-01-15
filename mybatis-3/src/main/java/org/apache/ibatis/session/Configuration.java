@@ -813,8 +813,10 @@ public class Configuration {
     }
   }
 
-  //Configuration的内置类，继承自HashMap，对HashMap进行了增强--增加了put时防重复的处理和get时取不到值时候的异常处理，这样核心应用层就不需要额外关心各种对象异常处理,简化应用层逻辑
-  // 设计模式--装饰器模式
+  //Configuration的内置类，继承自HashMap，对HashMap进行了增强
+  //  --增加了put时防重复的处理和get时取不到值时候的异常处理，
+  //  这样核心应用层就不需要额外关心各种对象异常处理,简化应用层逻辑
+  // 设计模式--装饰器模式（这种通过继承而非组合的算不算装饰器模式）
   protected static class StrictMap<V> extends HashMap<String, V> {
 
     private static final long serialVersionUID = -4950446264854982944L;
@@ -842,6 +844,7 @@ public class Configuration {
 
     @SuppressWarnings("unchecked")
     public V put(String key, V value) {
+      //对重复的Key直接抛出异常，不会覆盖
       if (containsKey(key)) {
         throw new IllegalArgumentException(name + " already contains value for " + key);
       }

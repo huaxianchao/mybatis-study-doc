@@ -32,6 +32,7 @@ import org.apache.ibatis.transaction.TransactionFactory;
 /**
  * @author Clinton Begin
  */
+//JdbcTransaction工厂，用于生产JdbcTransaction实例
 public class JdbcTransactionFactory implements TransactionFactory {
 
   @Override
