@@ -28,6 +28,7 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 /**
  * @author Clinton Begin
  */
+//插件类，实现了InvocationHandler接口
 public class Plugin implements InvocationHandler {
 
   private Object target;
@@ -40,6 +41,7 @@ public class Plugin implements InvocationHandler {
     this.signatureMap = signatureMap;
   }
 
+  //静态方法，
   public static Object wrap(Object target, Interceptor interceptor) {
     Map<Class<?>, Set<Method>> signatureMap = getSignatureMap(interceptor);
     Class<?> type = target.getClass();

@@ -37,9 +37,13 @@ public final class MappedStatement {
   private String resource;
   //全局配置
   private Configuration configuration;
+  //id，每个MappedStatement的唯一标识
   private String id;
+  //获取大小
   private Integer fetchSize;
+  //超时
   private Integer timeout;
+  //StatementHandler的类型，枚举：{STATEMENT 普通, PREPARED 预处理, CALLABLE 存储过程调用}
   private StatementType statementType;
   private ResultSetType resultSetType;
   private SqlSource sqlSource;
@@ -287,6 +291,7 @@ public final class MappedStatement {
     return resultSets;
   }
 
+  //获取BoundSQL
   public BoundSql getBoundSql(Object parameterObject) {
     BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
     List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();

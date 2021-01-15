@@ -21,10 +21,13 @@ import java.util.List;
 /**
  * @author Clinton Begin
  */
+//连接池状态
 public class PoolState {
 
+  //持有一个连接池的引用
   protected PooledDataSource dataSource;
 
+  //将连接分为两种状态 ：1 idle：空闲连接  2：正在使用的连接 ，分别存放在下面两个List里面
   protected final List<PooledConnection> idleConnections = new ArrayList<PooledConnection>();
   protected final List<PooledConnection> activeConnections = new ArrayList<PooledConnection>();
   protected long requestCount = 0;

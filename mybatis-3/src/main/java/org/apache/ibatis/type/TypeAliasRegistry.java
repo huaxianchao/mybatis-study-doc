@@ -35,6 +35,7 @@ import org.apache.ibatis.io.Resources;
 /**
  * @author Clinton Begin
  */
+//类型别名注册器，内部使用一个HashMap作为容器，在构造方法中将一些常用的注册进了HashMap中
 public class TypeAliasRegistry {
 
   private final Map<String, Class<?>> TYPE_ALIASES = new HashMap<String, Class<?>>();
@@ -121,10 +122,12 @@ public class TypeAliasRegistry {
     }
   }
 
+  //将参数包名下的所有类注册到HashMap容器中
   public void registerAliases(String packageName){
     registerAliases(packageName, Object.class);
   }
 
+  //将参数包名下，参数指定类的子类注册到HashMap容器中
   public void registerAliases(String packageName, Class<?> superType){
     ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<Class<?>>();
     resolverUtil.find(new ResolverUtil.IsA(superType), packageName);
@@ -132,7 +135,9 @@ public class TypeAliasRegistry {
     for(Class<?> type : typeSet){
       // Ignore inner classes and interfaces (including package-info.java)
       // Skip also inner classes. See issue #6
+      //若该类不属于 匿名类，接口，内部类中的一种
       if (!type.isAnonymousClass() && !type.isInterface() && !type.isMemberClass()) {
+        //注册到HashMap容器中
         registerAlias(type);
       }
     }
@@ -147,15 +152,22 @@ public class TypeAliasRegistry {
     registerAlias(alias, type);
   }
 
+  /**具体注册到HashMap容器的方法
+   * @param: alias --value.getSimpleName()
+   * @param: value --Class
+   * @Return: void
+   */ 
   public void registerAlias(String alias, Class<?> value) {
     if (alias == null) {
       throw new TypeException("The parameter alias cannot be null");
     }
     // issue #748
     String key = alias.toLowerCase(Locale.ENGLISH);
+    //若该类型的key已经被注册 且 该key对应的value 与参数的value不相同，抛出异常
     if (TYPE_ALIASES.containsKey(key) && TYPE_ALIASES.get(key) != null && !TYPE_ALIASES.get(key).equals(value)) {
       throw new TypeException("The alias '" + alias + "' is already mapped to the value '" + TYPE_ALIASES.get(key).getName() + "'.");
     }
+    //若上述条件不成立，将参数注册到HashMap容器中
     TYPE_ALIASES.put(key, value);
   }
 

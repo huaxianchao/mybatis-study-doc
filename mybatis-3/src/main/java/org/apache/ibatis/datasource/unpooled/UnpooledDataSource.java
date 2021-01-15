@@ -88,6 +88,7 @@ public class UnpooledDataSource implements DataSource {
     this.driverProperties = driverProperties;
   }
 
+  //获取Connection方法
   @Override
   public Connection getConnection() throws SQLException {
     return doGetConnection(username, password);
@@ -196,9 +197,13 @@ public class UnpooledDataSource implements DataSource {
     return doGetConnection(props);
   }
 
+  //实际的获取Connection方法
   private Connection doGetConnection(Properties properties) throws SQLException {
+    //初始化驱动
     initializeDriver();
+    //调用原生API，从DriverManager中获取连接，获取新的Connection对象
     Connection connection = DriverManager.getConnection(url, properties);
+    //配置Connection属性
     configureConnection(connection);
     return connection;
   }

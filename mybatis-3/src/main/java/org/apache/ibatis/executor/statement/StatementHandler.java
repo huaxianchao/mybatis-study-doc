@@ -29,18 +29,25 @@ import org.apache.ibatis.session.ResultHandler;
  */
 public interface StatementHandler {
 
+  //创建一个具体的Statement类型的实例(可以是Statement的子类，如PrepareStatement)
+  //在SqlSession接收到指令操作时，有Configuration的newStatementHandler创建，
+  //  意味着newStatementHandler是被Executor的查询，更新(增，删，改)触发的
+  //  即StatementHandler是由Executor负责管理和创建的
   Statement prepare(Connection connection)
       throws SQLException;
 
+  //初始化Statement实例并对sql占位符赋值
   void parameterize(Statement statement)
       throws SQLException;
 
   void batch(Statement statement)
       throws SQLException;
 
+  //通知Statement将insert、update、delete 操作推送到数据库
   int update(Statement statement)
       throws SQLException;
 
+  //通知 Statement 将 select 操作推送数据库并返回对应的查询结果
   <E> List<E> query(Statement statement, ResultHandler resultHandler)
       throws SQLException;
 

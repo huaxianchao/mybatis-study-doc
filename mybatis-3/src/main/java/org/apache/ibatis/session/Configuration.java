@@ -93,6 +93,7 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 /**
  * @author Clinton Begin
  */
+//环境信息，Mybtis初始化过程中的核心对象，几乎全部的配置信息保存在该对象中，在Mybatis初始化时创建，且全局唯一
 public class Configuration {
 
   protected Environment environment;
@@ -524,7 +525,7 @@ public class Configuration {
     resultSetHandler = (ResultSetHandler) interceptorChain.pluginAll(resultSetHandler);
     return resultSetHandler;
   }
-
+  //创建StatementHandler的方法，默认创建的是RoutingStatementHandler
   public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
     StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
     statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);

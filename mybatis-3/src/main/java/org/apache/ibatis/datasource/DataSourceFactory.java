@@ -21,6 +21,7 @@ import javax.sql.DataSource;
 /**
  * @author Clinton Begin
  */
+//创建数据源的工厂，使用工厂方法模式
 public interface DataSourceFactory {
 
   void setProperties(Properties props);

@@ -31,9 +31,13 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 /**
  * @author Clinton Begin
  */
+//Builder建造者模式中，builder角色的顶级父类，封装了通用的属性和方法
 public abstract class BaseBuilder {
+  //环境配置信息
   protected final Configuration configuration;
+  //类型别名注册器(指定实体类的别名存储在该对象中)
   protected final TypeAliasRegistry typeAliasRegistry;
+  //类型解析注册器(指定数据库类型与Java类型的转化器)
   protected final TypeHandlerRegistry typeHandlerRegistry;
 
   public BaseBuilder(Configuration configuration) {

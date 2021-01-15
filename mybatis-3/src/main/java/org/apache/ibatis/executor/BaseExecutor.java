@@ -49,15 +49,21 @@ public abstract class BaseExecutor implements Executor {
 
   private static final Log log = LogFactory.getLog(BaseExecutor.class);
 
+  //持有一个事务对象
   protected Transaction transaction;
+  //持有一个 SimpleExecutor/ReuseExecutor/BatchExecutor对象，用于具体的数据库操作
   protected Executor wrapper;
 
   protected ConcurrentLinkedQueue<DeferredLoad> deferredLoads;
+  //缓存
   protected PerpetualCache localCache;
   protected PerpetualCache localOutputParameterCache;
+  //环境信息
   protected Configuration configuration;
 
+  //查询栈
   protected int queryStack = 0;
+  //关闭标识
   private boolean closed;
 
   protected BaseExecutor(Configuration configuration, Transaction transaction) {

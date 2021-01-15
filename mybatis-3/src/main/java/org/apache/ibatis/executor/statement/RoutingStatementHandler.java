@@ -31,6 +31,8 @@ import org.apache.ibatis.session.RowBounds;
 /**
  * @author Clinton Begin
  */
+//这里也是个装饰模式，但是不同于Executor中的二级缓存的装饰模式，
+// 这里并没有对方法做加强，只是将 按照类型创建对应的StatementHandler子类的对象的逻辑由调用方转移到本类中
 public class RoutingStatementHandler implements StatementHandler {
 
   private final StatementHandler delegate;

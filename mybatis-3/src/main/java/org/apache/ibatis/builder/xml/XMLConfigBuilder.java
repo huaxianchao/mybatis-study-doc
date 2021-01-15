@@ -48,15 +48,16 @@ import org.apache.ibatis.type.JdbcType;
 /**
  * @author Clinton Begin
  */
+//解析mybatis-config.xml配置文件
 public class XMLConfigBuilder extends BaseBuilder {
 
   //标识--是否已经解析过
   private boolean parsed;
   //实际解析xml配置文件的类
   private XPathParser parser;
-  //环境信息
+  //标识<enviroment>配置的名称，默认读取<enviroment>标签的default属性
   private String environment;
-  //反射工厂
+  //反射工厂，用于创建和缓存反射对象
   private ReflectorFactory localReflectorFactory = new DefaultReflectorFactory();
 
   public XMLConfigBuilder(Reader reader) {
@@ -92,6 +93,7 @@ public class XMLConfigBuilder extends BaseBuilder {
     this.parser = parser;
   }
 
+  //实际解析配置文件-mybatis-config.xml的入口
   public Configuration parse() {
     if (parsed) {
       //若该配置文件已经被解析过，则抛出异常
@@ -103,6 +105,7 @@ public class XMLConfigBuilder extends BaseBuilder {
     return configuration;
   }
 
+  //具体解析的逻辑
   private void parseConfiguration(XNode root) {
     try {
       //issue #117 read properties first

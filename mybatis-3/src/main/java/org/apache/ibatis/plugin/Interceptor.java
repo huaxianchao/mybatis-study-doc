@@ -20,6 +20,7 @@ import java.util.Properties;
 /**
  * @author Clinton Begin
  */
+//拦截器接口，mybatis的核心之一，可以基于该接口自定义执行逻辑（分页等）
 public interface Interceptor {
 
   Object intercept(Invocation invocation) throws Throwable;

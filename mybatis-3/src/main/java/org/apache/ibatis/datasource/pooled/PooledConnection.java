@@ -33,6 +33,7 @@ class PooledConnection implements InvocationHandler {
 
   private int hashCode = 0;
   private PooledDataSource dataSource;
+  //持有的真实连接
   private Connection realConnection;
   private Connection proxyConnection;
   private long checkoutTimestamp;
@@ -229,10 +230,13 @@ class PooledConnection implements InvocationHandler {
    * @param args   - the parameters to be passed to the method
    * @see java.lang.reflect.InvocationHandler#invoke(Object, java.lang.reflect.Method, Object[])
    */
+  //拦截对close())方法的调用，不关闭，将连接放入池中
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     String methodName = method.getName();
+    //若调用的方法名是close
     if (CLOSE.hashCode() == methodName.hashCode() && CLOSE.equals(methodName)) {
+      //将自己放入连接池中
       dataSource.pushConnection(this);
       return null;
     } else {

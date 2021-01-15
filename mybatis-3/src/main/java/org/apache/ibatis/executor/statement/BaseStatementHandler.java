@@ -36,15 +36,18 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 /**
  * @author Clinton Begin
  */
-//批处理Statement
+  //BaseStatementHandler，适配器模式，类似一级缓存BaseExecutor的作用(勉强算适配器模式吧)
+  //本身也是一个抽象类，实现了StatementHandler接口，降低了StatementHandler接口的实现难度
 public abstract class BaseStatementHandler implements StatementHandler {
 
+  //环境信息
   protected final Configuration configuration;
   protected final ObjectFactory objectFactory;
   protected final TypeHandlerRegistry typeHandlerRegistry;
   protected final ResultSetHandler resultSetHandler;
   protected final ParameterHandler parameterHandler;
 
+  //执行器
   protected final Executor executor;
   protected final MappedStatement mappedStatement;
   protected final RowBounds rowBounds;

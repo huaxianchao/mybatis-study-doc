@@ -25,10 +25,13 @@ import org.apache.ibatis.cache.CacheException;
 /**
  * @author Clinton Begin
  */
+//mybatis缓存的默认实现类
 public class PerpetualCache implements Cache {
 
+  //每个缓存的唯一标识符
   private String id;
 
+  //HashMap作为缓存容器，自动初始化，按照当前jdk版本来说，默认容量是16
   private Map<Object, Object> cache = new HashMap<Object, Object>();
 
   public PerpetualCache(String id) {
