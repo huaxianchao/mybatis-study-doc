@@ -52,6 +52,7 @@ import org.apache.ibatis.type.TypeHandler;
 /**
  * @author Clinton Begin
  */
+//MapperBuilder助手
 public class MapperBuilderAssistant extends BaseBuilder {
   //当前命名空间
   private String currentNamespace;
@@ -104,16 +105,19 @@ public class MapperBuilderAssistant extends BaseBuilder {
     return currentNamespace + "." + base;
   }
 
+  //使用<cache-ref>注解
   public Cache useCacheRef(String namespace) {
     if (namespace == null) {
       throw new BuilderException("cache-ref element requires a namespace attribute.");
     }
     try {
       unresolvedCacheRef = true;
+      //根据<cache-ref>标签指定的namespace获取其缓存
       Cache cache = configuration.getCache(namespace);
       if (cache == null) {
         throw new IncompleteElementException("No cache for namespace '" + namespace + "' could be found.");
       }
+      //将当前mapper的引用也指向 <cache-ref>标签指定的namespace
       currentCache = cache;
       unresolvedCacheRef = false;
       return cache;

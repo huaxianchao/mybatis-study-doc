@@ -30,7 +30,9 @@ public class PoolState {
   //将连接分为两种状态 ：1 idle：空闲连接  2：正在使用的连接 ，分别存放在下面两个List里面
   protected final List<PooledConnection> idleConnections = new ArrayList<PooledConnection>();
   protected final List<PooledConnection> activeConnections = new ArrayList<PooledConnection>();
+  //总请求此时
   protected long requestCount = 0;
+  //总请求时间
   protected long accumulatedRequestTime = 0;
   protected long accumulatedCheckoutTime = 0;
   protected long claimedOverdueConnectionCount = 0;
@@ -72,15 +74,18 @@ public class PoolState {
     return claimedOverdueConnectionCount == 0 ? 0 : accumulatedCheckoutTimeOfOverdueConnections / claimedOverdueConnectionCount;
   }
 
+  //获取平均请求时间 ： 总请求时间/总请求次数
   public synchronized long getAverageCheckoutTime() {
     return requestCount == 0 ? 0 : accumulatedCheckoutTime / requestCount;
   }
 
 
+  //获取空闲连接数
   public synchronized int getIdleConnectionCount() {
     return idleConnections.size();
   }
 
+  //获取正在使用的连接数
   public synchronized int getActiveConnectionCount() {
     return activeConnections.size();
   }

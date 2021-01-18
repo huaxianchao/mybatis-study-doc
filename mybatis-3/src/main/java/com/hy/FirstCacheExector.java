@@ -37,7 +37,7 @@ import static org.apache.ibatis.executor.ExecutionPlaceholder.EXECUTION_PLACEHOL
  *              不对原有框架代码进行修改，仅仅是添加本类，及调用时候的不同
  *              实现：在本类注册一个BaseExector的子类，具体的查询数据库功能由BaseExector的子类实现(装饰器模式)
  *              将BaseExecutor中的一级缓存的逻辑添加到本类中来
- *              调用的时候，在将本类的对象注入的二级缓存中的delegate属性，{@link DebugMainTest}；testSefDefineFirstCacheExecutor方法
+ *              调用的时候，在将本类的对象注入的二级缓存中的delegate属性，{@link DebugMainTest}testSefDefineFirstCacheExecutor方法
  * @Author: xianchao.hua
  * @Create: 2021-01-07 15:34
  */

@@ -40,7 +40,7 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
   //本身也是一个抽象类，实现了StatementHandler接口，降低了StatementHandler接口的实现难度
 public abstract class BaseStatementHandler implements StatementHandler {
 
-  //环境信息
+  //环境配置信息
   protected final Configuration configuration;
   protected final ObjectFactory objectFactory;
   protected final TypeHandlerRegistry typeHandlerRegistry;

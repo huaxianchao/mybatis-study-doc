@@ -20,8 +20,10 @@ import org.apache.ibatis.cache.Cache;
 /**
  * @author Clinton Begin
  */
+// <cache-ref> 标签解析器
 public class CacheRefResolver {
   private final MapperBuilderAssistant assistant;
+  //被关联的mapper的namespace
   private final String cacheRefNamespace;
 
   public CacheRefResolver(MapperBuilderAssistant assistant, String cacheRefNamespace) {

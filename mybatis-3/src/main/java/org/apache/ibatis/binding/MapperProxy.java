@@ -33,8 +33,11 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
   private static final long serialVersionUID = -6424540398559729838L;
   private final SqlSession sqlSession;
   private final Class<T> mapperInterface;
-  //方法缓存Map，key->mapper方法，value->包装并解析的MapperMethod方法
-  //  因为Mapper方法解析包装成对应MapperMethod对象也很复杂耗时，所以做成了缓存
+  /**方法缓存Map，key->mapper方法，value->包装并解析的MapperMethod方法
+   * 因为Mapper方法解析包装成对应MapperMethod对象也很复杂耗时，所以做成了缓存
+   * {@link MapperProxyFactory}在调用该方法时传入，在MapperPrxyFactory中维护，
+   * 所有的MapperProxy使用的是指向同一个地址的缓存
+   */ 
   private final Map<Method, MapperMethod> methodCache;
 
   public MapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map<Method, MapperMethod> methodCache) {
@@ -53,13 +56,13 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
         throw ExceptionUtil.unwrapThrowable(t);
       }
     }
-    //这里根据mapper接口的方法从缓存的Map中获取MapperMethod方法，若第一次调用，则根据Mapper对象生成MapperMethod对象并放入缓存
+    //这里根据mapper接口的方法从缓存的Map中获取MapperMethod方法，若第一次调用（即程序启动时），则根据Mapper对象生成MapperMethod对象并放入缓存
     final MapperMethod mapperMethod = cachedMapperMethod(method);
     //调用实际的MapperMethod对象的方法
     return mapperMethod.execute(sqlSession, args);
   }
 
-  /**根据Mapper方法从缓存Map中获取对应的MapperMethod方法
+  /** 根据Mapper方法从缓存Map中获取对应的MapperMethod方法
    *  若未获取到，则把method包装成MappedMethod对象并存入缓存Map中
    * @param: method
    * @Return: org.apache.ibatis.binding.MapperMethod

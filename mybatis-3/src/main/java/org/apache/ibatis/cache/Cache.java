@@ -38,7 +38,7 @@ import java.util.concurrent.locks.ReadWriteLock;
  *
  * @author Clinton Begin
  */
-
+//mybatis定义的缓存接口，一级缓存/二级缓存
 public interface Cache {
 
   /**

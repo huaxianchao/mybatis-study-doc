@@ -22,8 +22,10 @@ import java.util.List;
 /**
  * @author Clinton Begin
  */
+//拦截链 -- 责任链模式
 public class InterceptorChain {
 
+  //存放拦截器(插件)的集合
   private final List<Interceptor> interceptors = new ArrayList<Interceptor>();
 
   public Object pluginAll(Object target) {
@@ -33,10 +35,11 @@ public class InterceptorChain {
     return target;
   }
 
+  //添加拦截器（插件）
   public void addInterceptor(Interceptor interceptor) {
     interceptors.add(interceptor);
   }
-  
+  //获取所有拦截器（插件）
   public List<Interceptor> getInterceptors() {
     return Collections.unmodifiableList(interceptors);
   }

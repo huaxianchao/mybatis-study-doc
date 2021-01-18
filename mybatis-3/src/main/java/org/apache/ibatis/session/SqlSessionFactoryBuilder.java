@@ -49,7 +49,7 @@ public class SqlSessionFactoryBuilder {
     return build(reader, null, properties);
   }
 
-  //使用字符流构建的实际方法，需要字符流+环境信息+properties
+  //使用字符流构建的实际方法，需要字符流+环境配置信息+properties
   public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
     try {
       //使用XMLConfigBuilder解析字符流，即解析配置文件
@@ -82,7 +82,7 @@ public class SqlSessionFactoryBuilder {
     return build(inputStream, null, properties);
   }
 
-  //根据字节流构建的实际方法，需要字节流+环境信息+properties
+  //根据字节流构建的实际方法，需要字节流+环境配置信息+properties
   public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
     try {
       //使用XMLConfigBuilder解析字节流，即解析配置文件

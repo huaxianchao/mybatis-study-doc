@@ -93,7 +93,7 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 /**
  * @author Clinton Begin
  */
-//环境信息，Mybtis初始化过程中的核心对象，几乎全部的配置信息保存在该对象中，在Mybatis初始化时创建，且全局唯一
+//环境配置信息，Mybtis初始化过程中的核心对象，几乎全部的配置信息保存在该对象中，在Mybatis初始化时创建，且全局唯一
 public class Configuration {
 
   protected Environment environment;
@@ -187,6 +187,9 @@ public class Configuration {
    * references a cache bound to another namespace and the value is the
    * namespace which the actual cache is bound to.
    */
+  //用于存储使用了<caache-ref/>标签的二级缓存的nameSpace
+  // key :namespace(绑定到其它二级缓存的mapper的namespace)
+  // vlaue： 被绑定的mapper的namespace
   protected final Map<String, String> cacheRefMap = new HashMap<String, String>();
 
   public Configuration(Environment environment) {
@@ -536,8 +539,10 @@ public class Configuration {
     return newExecutor(transaction, defaultExecutorType);
   }
 
+  //创建执行器--这里是简单工厂模式
   public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
     executorType = executorType == null ? defaultExecutorType : executorType;
+    //若执行器类型未传入，则默认使用SIMPLE执行器
     executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
     Executor executor;
     if (ExecutorType.BATCH == executorType) {
@@ -547,6 +552,7 @@ public class Configuration {
     } else {
       executor = new SimpleExecutor(this, transaction);
     }
+    //若开启了二级缓存，则会创建CachingExecutor并将上面创建的Executor作为其delegate，返回CachingExecutor
     if (cacheEnabled) {
       executor = new CachingExecutor(executor);
     }
@@ -742,6 +748,7 @@ public class Configuration {
    * to call this method once all the mappers are added as it provides fail-fast
    * statement validation.
    */
+  //构建所有的Statement
   protected void buildAllStatements() {
     if (!incompleteResultMaps.isEmpty()) {
       synchronized (incompleteResultMaps) {

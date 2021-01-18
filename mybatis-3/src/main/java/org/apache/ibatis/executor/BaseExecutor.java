@@ -58,7 +58,7 @@ public abstract class BaseExecutor implements Executor {
   //缓存
   protected PerpetualCache localCache;
   protected PerpetualCache localOutputParameterCache;
-  //环境信息
+  //环境配置信息
   protected Configuration configuration;
 
   //查询栈
@@ -135,7 +135,9 @@ public abstract class BaseExecutor implements Executor {
 
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
+    //获取BoundSql
     BoundSql boundSql = ms.getBoundSql(parameter);
+    //根据参数计算对应的一级缓存key
     CacheKey key = createCacheKey(ms, parameter, rowBounds, boundSql);
     return query(ms, parameter, rowBounds, resultHandler, key, boundSql);
  }
@@ -147,12 +149,15 @@ public abstract class BaseExecutor implements Executor {
     if (closed) {
       throw new ExecutorException("Executor was closed.");
     }
+    //若查询栈深度为0 且 指定要刷新缓存
     if (queryStack == 0 && ms.isFlushCacheRequired()) {
+      //刷新缓存
       clearLocalCache();
     }
     List<E> list;
     try {
       queryStack++;
+      //当resultHandler == null 时，从缓存中查询，若resultHandler不为null,不从缓存中查询
       list = resultHandler == null ? (List<E>) localCache.getObject(key) : null;
       if (list != null) {
         handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
@@ -190,8 +195,6 @@ public abstract class BaseExecutor implements Executor {
   }
 
   /**创建缓存的key
-   * @Author: xianchao.hua
-   * @Date: 2021/1/7 14:23
    * @param: ms
    * @param: parameterObject
    * @param: rowBounds

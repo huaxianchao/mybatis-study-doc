@@ -99,7 +99,7 @@ public class XMLConfigBuilder extends BaseBuilder {
       //若该配置文件已经被解析过，则抛出异常
       throw new BuilderException("Each XMLConfigBuilder can only be used once.");
     }
-    //若该配置文件未被解析过，则解析并将parsed--解析标识设置为true
+    //若该配置文件未被解析过，则解析并将parsed(解析标识)设置为true
     parsed = true;
     parseConfiguration(parser.evalNode("/configuration"));
     return configuration;

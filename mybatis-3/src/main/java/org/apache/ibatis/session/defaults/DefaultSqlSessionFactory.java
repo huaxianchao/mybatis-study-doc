@@ -44,6 +44,7 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
 
   @Override
   public SqlSession openSession() {
+    //从DataSorce获取Session，默认使用SimpleExecutor，autoCommit = false
     return openSessionFromDataSource(configuration.getDefaultExecutorType(), null, false);
   }
 
@@ -87,12 +88,24 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     return configuration;
   }
 
+  /**从DataSource获取SqlSession
+   * @Author: xianchao.hua
+   * @Date: 2021/1/18 13:33
+   * @param: execType  具体的SQL执行器的类型
+   * @param: level  事务隔离级别
+   * @param: autoCommit  是否自动提交
+   * @Return: org.apache.ibatis.session.SqlSession
+   */ 
   private SqlSession openSessionFromDataSource(ExecutorType execType, TransactionIsolationLevel level, boolean autoCommit) {
     Transaction tx = null;
     try {
+      //从环境配置信息中获取Enviroment
       final Environment environment = configuration.getEnvironment();
+      //从Enviroment中获取TransactionFactory
       final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
+      //通过事务工厂创建事务
       tx = transactionFactory.newTransaction(environment.getDataSource(), level, autoCommit);
+      //通过环境配置信息创建执行器
       final Executor executor = configuration.newExecutor(tx, execType);
       return new DefaultSqlSession(configuration, executor, autoCommit);
     } catch (Exception e) {
@@ -103,6 +116,7 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     }
   }
 
+  //从连接获取SqlSession
   private SqlSession openSessionFromConnection(ExecutorType execType, Connection connection) {
     try {
       boolean autoCommit;
@@ -111,6 +125,7 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
       } catch (SQLException e) {
         // Failover to true, as most poor drivers
         // or databases won't support transactions
+        //若产生异常，则将自动提交设置为true
         autoCommit = true;
       }      
       final Environment environment = configuration.getEnvironment();
@@ -125,13 +140,18 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     }
   }
 
+  //从环境信息获取事务工厂
   private TransactionFactory getTransactionFactoryFromEnvironment(Environment environment) {
+    //若环境信息为空 或 环境信息定义的事务工厂为空
     if (environment == null || environment.getTransactionFactory() == null) {
+      //创建一个新的ManagedTransactionFactory并返回
       return new ManagedTransactionFactory();
     }
+    //若环境信息不为空 且 环境信息中定义了事务工厂，返回环境信息中定义的事务工厂
     return environment.getTransactionFactory();
   }
 
+  //关闭事务
   private void closeTransaction(Transaction tx) {
     if (tx != null) {
       try {

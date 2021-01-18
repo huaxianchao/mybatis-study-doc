@@ -41,6 +41,7 @@ import org.apache.ibatis.reflection.property.PropertyNamer;
 /**
  * @author Clinton Begin
  */
+//反射器，此类表示一组缓存的类定义信息，允许在属性名称和getter/setter方法之间轻松映射
 public class Reflector {
 
   private static final String[] EMPTY_STRING_ARRAY = new String[0];
@@ -54,10 +55,12 @@ public class Reflector {
   private Map<String, Class<?>> getTypes = new HashMap<String, Class<?>>();
   private Constructor<?> defaultConstructor;
 
+  //不区分大小写的属性缓存
   private Map<String, String> caseInsensitivePropertyMap = new HashMap<String, String>();
 
   public Reflector(Class<?> clazz) {
     type = clazz;
+    //添加默认改造方法
     addDefaultConstructor(clazz);
     addGetMethods(clazz);
     addSetMethods(clazz);
@@ -72,9 +75,11 @@ public class Reflector {
     }
   }
 
+  //添加默认的构造函数
   private void addDefaultConstructor(Class<?> clazz) {
     Constructor<?>[] consts = clazz.getDeclaredConstructors();
     for (Constructor<?> constructor : consts) {
+      //若构造函数的形参列表长度为0(即不需要传入任何参数)
       if (constructor.getParameterTypes().length == 0) {
         if (canAccessPrivateMethods()) {
           try {
@@ -334,6 +339,7 @@ public class Reflector {
     return sb.toString();
   }
 
+  //可以访问私有方法
   private static boolean canAccessPrivateMethods() {
     try {
       SecurityManager securityManager = System.getSecurityManager();

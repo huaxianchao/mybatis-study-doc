@@ -35,6 +35,7 @@ class PooledConnection implements InvocationHandler {
   private PooledDataSource dataSource;
   //持有的真实连接
   private Connection realConnection;
+  //代理连接
   private Connection proxyConnection;
   private long checkoutTimestamp;
   private long createdTimestamp;
@@ -70,6 +71,7 @@ class PooledConnection implements InvocationHandler {
    *
    * @return True if the connection is usable
    */
+  //检测连接是否可用，valid标识为true && 连接不为null && 连接数据库实际执行SQL正常
   public boolean isValid() {
     return valid && realConnection != null && dataSource.pingConnection(this);
   }
@@ -79,6 +81,7 @@ class PooledConnection implements InvocationHandler {
    *
    * @return The connection
    */
+  //获取包装的实际连接
   public Connection getRealConnection() {
     return realConnection;
   }
@@ -230,7 +233,7 @@ class PooledConnection implements InvocationHandler {
    * @param args   - the parameters to be passed to the method
    * @see java.lang.reflect.InvocationHandler#invoke(Object, java.lang.reflect.Method, Object[])
    */
-  //拦截对close())方法的调用，不关闭，将连接放入池中
+  //拦截对close())方法的调用，实际执行时不关闭Connection，将连接放入池中
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     String methodName = method.getName();

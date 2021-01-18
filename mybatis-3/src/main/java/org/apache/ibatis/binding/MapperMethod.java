@@ -413,6 +413,7 @@ public class MapperMethod {
       final Class<?>[] argTypes = method.getParameterTypes();
       //若该方法的所有参数类型遍历
       for (int i = 0; i < argTypes.length; i++) {
+        //若参数中既没有传入RowBounds类型也没有传入ResultHandler类型
         //todo RowBounds和ResultHandler未分析
         if (!RowBounds.class.isAssignableFrom(argTypes[i]) && !ResultHandler.class.isAssignableFrom(argTypes[i])) {
           //下面是对返回值中的value进行处理

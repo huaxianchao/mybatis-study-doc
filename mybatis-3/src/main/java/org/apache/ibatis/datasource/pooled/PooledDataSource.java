@@ -289,6 +289,7 @@ public class PooledDataSource implements DataSource {
   /*
    * Closes all active and idle connections in the pool
    */
+  //关闭连接池中全部正在使用和空闲的数据库连接
   public void forceCloseAll() {
     synchronized (state) {
       expectedConnectionTypeCode = assembleConnectionTypeCode(dataSource.getUrl(), dataSource.getUsername(), dataSource.getPassword());
@@ -334,17 +335,22 @@ public class PooledDataSource implements DataSource {
     return ("" + url + username + password).hashCode();
   }
 
+  //将参数PooledConnection放入到数据库连接池中
   protected void pushConnection(PooledConnection conn) throws SQLException {
 
+    //加锁
     synchronized (state) {
+      //将该连接从 activeConnections(正在使用的连接池)中删除
       state.activeConnections.remove(conn);
       if (conn.isValid()) {
+        //如果空闲连接数量小于最大空闲连接数量 且 连接类型与期望的类型
         if (state.idleConnections.size() < poolMaximumIdleConnections && conn.getConnectionTypeCode() == expectedConnectionTypeCode) {
           state.accumulatedCheckoutTime += conn.getCheckoutTime();
           if (!conn.getRealConnection().getAutoCommit()) {
             conn.getRealConnection().rollback();
           }
           PooledConnection newConn = new PooledConnection(conn.getRealConnection(), this);
+          //添加到存储空闲连接的数组
           state.idleConnections.add(newConn);
           newConn.setCreatedTimestamp(conn.getCreatedTimestamp());
           newConn.setLastUsedTimestamp(conn.getLastUsedTimestamp());
@@ -352,6 +358,7 @@ public class PooledDataSource implements DataSource {
           if (log.isDebugEnabled()) {
             log.debug("Returned connection " + newConn.getRealHashCode() + " to pool.");
           }
+          //唤醒在state上等待的所有线程
           state.notifyAll();
         } else {
           state.accumulatedCheckoutTime += conn.getCheckoutTime();
@@ -496,10 +503,13 @@ public class PooledDataSource implements DataSource {
    * @param conn - the connection to check
    * @return True if the connection is still usable
    */
+  //检查参数传入的数据库连接是否 仍然可用
   protected boolean pingConnection(PooledConnection conn) {
+    //返回值准备
     boolean result = true;
 
     try {
+      //result = 连接未关闭
       result = !conn.getRealConnection().isClosed();
     } catch (SQLException e) {
       if (log.isDebugEnabled()) {
@@ -507,7 +517,7 @@ public class PooledDataSource implements DataSource {
       }
       result = false;
     }
-
+    //若连接未关闭
     if (result) {
       if (poolPingEnabled) {
         if (poolPingConnectionsNotUsedFor >= 0 && conn.getTimeElapsedSinceLastUse() > poolPingConnectionsNotUsedFor) {
@@ -520,7 +530,9 @@ public class PooledDataSource implements DataSource {
             ResultSet rs = statement.executeQuery(poolPingQuery);
             rs.close();
             statement.close();
+            //如果连接的自动提交属性为false
             if (!realConn.getAutoCommit()) {
+              //回滚
               realConn.rollback();
             }
             result = true;

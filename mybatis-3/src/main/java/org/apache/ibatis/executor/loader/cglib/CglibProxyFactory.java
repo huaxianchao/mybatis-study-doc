@@ -43,6 +43,7 @@ import org.apache.ibatis.session.Configuration;
 /**
  * @author Clinton Begin
  */
+//使用Cglib的代理
 public class CglibProxyFactory implements ProxyFactory {
 
   private static final Log log = LogFactory.getLog(CglibProxyFactory.class);

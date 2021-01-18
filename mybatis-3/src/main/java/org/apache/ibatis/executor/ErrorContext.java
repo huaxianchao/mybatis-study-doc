@@ -18,6 +18,7 @@ package org.apache.ibatis.executor;
 /**
  * @author Clinton Begin
  */
+//错误环境，单例模式
 public class ErrorContext {
 
   //行号分隔符
