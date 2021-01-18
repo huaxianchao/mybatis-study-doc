@@ -1,2 +1,2 @@
 # mybatis-study
-mybatis源码学习注释
+mybatis源码分析学习注释
