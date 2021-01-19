@@ -35,8 +35,8 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
   private final Class<T> mapperInterface;
   /**方法缓存Map，key->mapper方法，value->包装并解析的MapperMethod方法
    * 因为Mapper方法解析包装成对应MapperMethod对象也很复杂耗时，所以做成了缓存
-   * {@link MapperProxyFactory}在调用该方法时传入，在MapperPrxyFactory中维护，
-   * 所有的MapperProxy使用的是指向同一个地址的缓存
+   * {@link MapperProxyFactory}在调用该方法时传入，在MapperPrxyFactory中统一维护，
+   * 同一个mapper接口下的MapperProxy使用的是指向同一个地址的缓存
    */ 
   private final Map<Method, MapperMethod> methodCache;
 
@@ -49,6 +49,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
 
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    //若调用的是从基类Object中自动继承来的方法，直接调用无需代理
     if (Object.class.equals(method.getDeclaringClass())) {
       try {
         return method.invoke(this, args);
@@ -63,7 +64,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
   }
 
   /** 根据Mapper方法从缓存Map中获取对应的MapperMethod方法
-   *  若未获取到，则把method包装成MappedMethod对象并存入缓存Map中
+   *  若未获取到，则把method包装成MappedMethod对象并存入缓存Map中并返回
    * @param: method
    * @Return: org.apache.ibatis.binding.MapperMethod
    */
@@ -75,7 +76,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
       mapperMethod = new MapperMethod(mapperInterface, method, sqlSession.getConfiguration());
       methodCache.put(method, mapperMethod);
     }
-    //返回参数包装成mapperMethod的对象
+    //若成功从缓存中获取到，直接返回
     return mapperMethod;
   }
 

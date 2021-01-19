@@ -31,10 +31,12 @@ import java.util.Set;
  * @author Eduardo Macarron
  * @author Lasse Voss
  */
-//mapper注册器
+//mapper注册器，把Mapper注册进内置的HashMap中，key->Class，value->MapperProxy工厂
+  //说明每个mapper接口都有一个对应的MapperProxyFactory，是工厂方法模式
+  //将mapper存储到容器中，以后用直接从容器中取出，享元模式
 public class MapperRegistry {
 
-  private final Configuration config;
+    private final Configuration config;
   //HashMap，key为Mapper接口的class，value为对应的MapperProxyFactory(mapper代理工厂)
   private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<Class<?>, MapperProxyFactory<?>>();
 
@@ -42,12 +44,20 @@ public class MapperRegistry {
     this.config = config;
   }
 
+  /**获取mapper --实际返回的是该mapper的代理
+   * @param: type --接口对应的Class 实例
+   * @param: sqlSession
+   * @Return: T  该mapper的MapperProxy，使用MapperProxyFactory生成
+   */ 
   @SuppressWarnings("unchecked")
   public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
+    //从容器中查询
     final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
+    //若容器中不存在，抛出异常（因为程序启动时就会把所有Mapper加载到容器中）
     if (mapperProxyFactory == null) {
       throw new BindingException("Type " + type + " is not known to the MapperRegistry.");
     }
+    //若容器中存在，使用MapperProxyFactory创建Mapper的代理实例并返回
     try {
       return mapperProxyFactory.newInstance(sqlSession);
     } catch (Exception e) {

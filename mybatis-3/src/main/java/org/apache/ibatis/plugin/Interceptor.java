@@ -27,6 +27,7 @@ public interface Interceptor {
 
   Object plugin(Object target);
 
+  //设置属性
   void setProperties(Properties properties);
 
 }

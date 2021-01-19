@@ -101,7 +101,7 @@ public class SqlSessionFactoryBuilder {
     }
   }
 
-  //根据Configuration构建
+  //根据Configuration构建DefaultSqlSessionFactory
   public SqlSessionFactory build(Configuration config) {
     return new DefaultSqlSessionFactory(config);
   }

@@ -43,6 +43,7 @@ import org.apache.ibatis.session.SqlSession;
  *
  * @author Clinton Begin
  */
+//SqlSession的默认实现类，该类不是线程安全的
 public class DefaultSqlSession implements SqlSession {
 
   //当前环境

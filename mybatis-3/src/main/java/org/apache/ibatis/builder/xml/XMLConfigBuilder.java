@@ -51,7 +51,7 @@ import org.apache.ibatis.type.JdbcType;
 //解析mybatis-config.xml配置文件
 public class XMLConfigBuilder extends BaseBuilder {
 
-  //标识--是否已经解析过
+  //标识--是否已经解析过，防止对配置文件二次解析
   private boolean parsed;
   //实际解析xml配置文件的类
   private XPathParser parser;
@@ -355,11 +355,16 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+  //解析Envirnment中的<mappers>标签
   private void mapperElement(XNode parent) throws Exception {
     if (parent != null) {
+      //获取<mappers>的所有子标签，遍历
       for (XNode child : parent.getChildren()) {
+        //若子标签是<package>
         if ("package".equals(child.getName())) {
+          //获取<package>标签的name属性（即mapper所在的包名）
           String mapperPackage = child.getStringAttribute("name");
+          //将mapper添加到Configuration
           configuration.addMappers(mapperPackage);
         } else {
           String resource = child.getStringAttribute("resource");

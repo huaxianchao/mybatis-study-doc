@@ -35,7 +35,7 @@ import java.util.*;
  * @author Eduardo Macarron
  * @author Lasse Voss
  */
-//MapperMethod方法，对Method方法进行一层封装
+//MapperMethod方法，对Mapper中的Method方法进行一层封装
 public class MapperMethod {
 
   private final SqlCommand command;

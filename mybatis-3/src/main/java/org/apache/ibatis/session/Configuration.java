@@ -143,7 +143,7 @@ public class Configuration {
   protected ObjectFactory objectFactory = new DefaultObjectFactory();
   // 对象包装器工厂,主要用来在创建非原生对象,比如增加了某些监控或者特殊属性的代理类
   protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
-  //mapper注册器
+  //mapper注册器,在启动时会把所有的mapper注册到内存中
   protected MapperRegistry mapperRegistry = new MapperRegistry(this);
   // 延迟加载的全局开关。当开启时，所有关联对象都会延迟加载。特定关联关系中可通过设置fetchType属性来覆盖该项的开关状态。
   protected boolean lazyLoadingEnabled = false;
@@ -163,6 +163,7 @@ public class Configuration {
 
   // mybatis的插件列表
   protected final InterceptorChain interceptorChain = new InterceptorChain();
+  //类型解析注册器
   protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
   // 类型注册器, 用于在执行sql语句的出入参映射以及mybatis-config文件里的各种配置比如<transactionManager type="JDBC"/><dataSource type="POOLED">时使用简写
   protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
@@ -712,6 +713,10 @@ public class Configuration {
     mapperRegistry.addMappers(packageName, superType);
   }
 
+  /** 解析mapper并添加到mapperRegistry缓存中
+   * @param: packageName
+   * @Return: void
+   */ 
   public void addMappers(String packageName) {
     mapperRegistry.addMappers(packageName);
   }

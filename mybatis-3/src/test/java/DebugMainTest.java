@@ -41,6 +41,13 @@ public class DebugMainTest {
     }
 
     @Test
+    public void testSqlSession(){
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        Object o = sqlSession.selectOne("com.hy.mapper.UserMapper.getById", 1);
+        System.out.println(o);
+    }
+
+    @Test
     public void testSimpleExecutor() throws SQLException {
         SimpleExecutor executor = new SimpleExecutor(configuration, new ManagedTransaction(connection, true));
         //执行两次查询--直接调用SimpleExector的doQuery方法，所以不涉及缓存，相同的Sql被预编译两次，执行两次

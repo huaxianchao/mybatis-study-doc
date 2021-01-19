@@ -47,6 +47,7 @@ public class Plugin implements InvocationHandler {
     Class<?> type = target.getClass();
     Class<?>[] interfaces = getAllInterfaces(type, signatureMap);
     if (interfaces.length > 0) {
+      //动态代理
       return Proxy.newProxyInstance(
           type.getClassLoader(),
           interfaces,

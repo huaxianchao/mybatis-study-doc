@@ -30,13 +30,18 @@ import java.sql.Statement;
  */
 public class ScriptRunner {
 
+  //从系统属性中获取行分隔符
   private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
 
+  //默认分隔符
   private static final String DEFAULT_DELIMITER = ";";
 
+  //数据库连接
   private Connection connection;
 
+  //遇到错误停止
   private boolean stopOnError;
+  //自动提交
   private boolean autoCommit;
   private boolean sendFullScript;
   private boolean removeCRs;

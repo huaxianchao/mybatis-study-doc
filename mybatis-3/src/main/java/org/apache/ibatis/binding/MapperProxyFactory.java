@@ -28,9 +28,9 @@ import org.apache.ibatis.session.SqlSession;
 //Mapper代理对象工厂，可以生成Mapper代理对象
 public class MapperProxyFactory<T> {
 
-  //Mapper接口(interface)的class，设置为final，说明一个工厂只能创建一个接口类型的代理对象
+  //Mapper接口(interface)的class，设置为final，说明一个工厂只能创建一个接口类型的代理对象，工厂方法模式
   private final Class<T> mapperInterface;
-  //缓存，key为method，value为MapperMethod，todo 后续还需要分析
+  //缓存，key为method，value为MapperMethod，该容器被所有的代理所共享，跨线程所以要线程安全的ConcurrentHashmap
   private final Map<Method, MapperMethod> methodCache = new ConcurrentHashMap<Method, MapperMethod>();
 
   public MapperProxyFactory(Class<T> mapperInterface) {

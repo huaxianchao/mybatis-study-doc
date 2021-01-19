@@ -32,6 +32,8 @@ public class DebugMainTest {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         //获取mapper
         UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+        UserMapper mapper2 = sqlSession.getMapper(UserMapper.class);
+        System.out.println(mapper.equals(mapper2));
         User user = mapper.getById(1);
         System.out.println(user);
     }

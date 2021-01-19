@@ -41,35 +41,51 @@ import org.apache.ibatis.reflection.property.PropertyNamer;
 /**
  * @author Clinton Begin
  */
-//反射器，此类表示一组缓存的类定义信息，允许在属性名称和getter/setter方法之间轻松映射
+//反射器，此类表示一组缓存的类定义信息，允许在属性名称和getter/setter方法之间轻松映射，每个实体类都对应一个反射器的对象
 public class Reflector {
 
   private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
+  //对应的class类型
   private Class<?> type;
+  //可读的属性的名称集合，就是存在对应的get方法的属性，初始为空数组
   private String[] readablePropertyNames = EMPTY_STRING_ARRAY;
+  //可写的属性的名称集合，就是存在对应的set方法的属性，初始为空数组
   private String[] writeablePropertyNames = EMPTY_STRING_ARRAY;
+  //缓存set方法，key->属性名，value->对set方法对应对象的封装
   private Map<String, Invoker> setMethods = new HashMap<String, Invoker>();
+  //缓存get方法，key->属性名，value->对get方法对应对象的封装
   private Map<String, Invoker> getMethods = new HashMap<String, Invoker>();
+  //缓存set方法的入参类型，key->属性名，value->set方法的入参类型
   private Map<String, Class<?>> setTypes = new HashMap<String, Class<?>>();
+  //缓存get方法的返回值类型，key->属性名，value->get方法的返回值类型
   private Map<String, Class<?>> getTypes = new HashMap<String, Class<?>>();
+  //默认的构造方法
   private Constructor<?> defaultConstructor;
 
-  //不区分大小写的属性缓存
+  //记录了所有的属性名称的大写
   private Map<String, String> caseInsensitivePropertyMap = new HashMap<String, String>();
 
   public Reflector(Class<?> clazz) {
+    //初始化type
     type = clazz;
-    //添加默认改造方法
+    //添加默认构造方法
     addDefaultConstructor(clazz);
+    //添加get方法
     addGetMethods(clazz);
+    //添加set方法
     addSetMethods(clazz);
+    //添加属性
     addFields(clazz);
+    //根据getMethods集合，初始化readablePropertyNames
     readablePropertyNames = getMethods.keySet().toArray(new String[getMethods.keySet().size()]);
+    //根据setMethods集合，初始化writeablePropertyNames
     writeablePropertyNames = setMethods.keySet().toArray(new String[setMethods.keySet().size()]);
+    //将所有可读的属性添加到caseInsensitivePropertyMap中,属性名变大写
     for (String propName : readablePropertyNames) {
       caseInsensitivePropertyMap.put(propName.toUpperCase(Locale.ENGLISH), propName);
     }
+    //将所有可写的属性添加到caseInsensitivePropertyMap中，属性名变大写
     for (String propName : writeablePropertyNames) {
       caseInsensitivePropertyMap.put(propName.toUpperCase(Locale.ENGLISH), propName);
     }
@@ -95,13 +111,19 @@ public class Reflector {
     }
   }
 
+  //添加get方法
   private void addGetMethods(Class<?> cls) {
     Map<String, List<Method>> conflictingGetters = new HashMap<String, List<Method>>();
     Method[] methods = getClassMethods(cls);
+    //遍历所有方法
     for (Method method : methods) {
+      //获取方法名
       String name = method.getName();
+      //若方法名以'get'开始
       if (name.startsWith("get") && name.length() > 3) {
+        //若方法的形参列表长度为0
         if (method.getParameterTypes().length == 0) {
+          //去除方法名中的'is'/'get'/'set',剩下的首字母变小写，如: getName -> name
           name = PropertyNamer.methodToProperty(name);
           addMethodConflict(conflictingGetters, name, method);
         }

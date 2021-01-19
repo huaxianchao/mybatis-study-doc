@@ -28,15 +28,24 @@ public final class PropertyNamer {
     // Prevent Instantiation of Static Class
   }
 
+ /**方法转化成Property
+  * @param: name --方法名
+  * @Return: java.lang.String
+  */ 
   public static String methodToProperty(String name) {
     if (name.startsWith("is")) {
+      //截取方法名，去掉前两位(去掉'is')
       name = name.substring(2);
-    } else if (name.startsWith("get") || name.startsWith("set")) {
+    }
+    else if (name.startsWith("get") || name.startsWith("set")) {
+      //截取方法名，去掉前三位(去掉'get'/'set')
       name = name.substring(3);
     } else {
       throw new ReflectionException("Error parsing property name '" + name + "'.  Didn't start with 'is', 'get' or 'set'.");
     }
 
+    //去除'is'/'get'/'set'后的方法名字符串，首字母变成小写
+    //如: getName  -> name
     if (name.length() == 1 || (name.length() > 1 && !Character.isUpperCase(name.charAt(1)))) {
       name = name.substring(0, 1).toLowerCase(Locale.ENGLISH) + name.substring(1);
     }

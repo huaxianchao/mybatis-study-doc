@@ -36,6 +36,7 @@ import org.apache.ibatis.transaction.managed.ManagedTransactionFactory;
  */
 public class DefaultSqlSessionFactory implements SqlSessionFactory {
 
+  //配置环境的信息
   private final Configuration configuration;
 
   public DefaultSqlSessionFactory(Configuration configuration) {
@@ -99,7 +100,7 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
   private SqlSession openSessionFromDataSource(ExecutorType execType, TransactionIsolationLevel level, boolean autoCommit) {
     Transaction tx = null;
     try {
-      //从环境配置信息中获取Enviroment
+      //从环境配置信息中获取Enviroment配置
       final Environment environment = configuration.getEnvironment();
       //从Enviroment中获取TransactionFactory
       final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
