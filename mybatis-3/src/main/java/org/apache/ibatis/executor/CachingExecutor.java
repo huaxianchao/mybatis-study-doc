@@ -37,10 +37,11 @@ import org.apache.ibatis.transaction.Transaction;
  */
 public class CachingExecutor implements Executor {
 
-  //持有一个Executor类型的对象，装饰器模式，先执行二级缓存的逻辑，再执行Exector的逻辑
+  //持有一个Executor类型的对象，先执行二级缓存的逻辑，再执行Exector的逻辑,装饰器模式
   private Executor delegate;
   private TransactionalCacheManager tcm = new TransactionalCacheManager();
 
+  //只有一个有参构造，传入Executor，TransactionlCacheManager从Executor获取
   public CachingExecutor(Executor delegate) {
     this.delegate = delegate;
     delegate.setExecutorWrapper(this);
@@ -51,6 +52,7 @@ public class CachingExecutor implements Executor {
     return delegate.getTransaction();
   }
 
+  //close方法，参数forceRollback--是否强制回滚
   @Override
   public void close(boolean forceRollback) {
     try {

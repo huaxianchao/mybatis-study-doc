@@ -78,6 +78,7 @@ public class SelectKeyGenerator implements KeyGenerator {
               } else {
                 // no getter for the property - maybe just a single value object
                 // so try that
+                //可能是没有get方法的简单类型
                 setValue(metaParam, keyProperties[0], values.get(0));
               }
             } else {

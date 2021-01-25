@@ -25,7 +25,7 @@ import org.apache.ibatis.cache.CacheException;
 /**
  * @author Clinton Begin
  */
-//mybatis缓存的默认实现类
+//mybatis缓存的简单实现类，其它缓存可以使用装饰器模式对该类进行装饰,cache包下的缓存类等
 public class PerpetualCache implements Cache {
 
   //每个缓存的唯一标识符
@@ -33,7 +33,7 @@ public class PerpetualCache implements Cache {
 
   //HashMap作为缓存容器，自动初始化，按照当前jdk版本来说，默认容量是16
   private Map<Object, Object> cache = new HashMap<Object, Object>();
-
+  //只有一个有参构造方法，id需要传入
   public PerpetualCache(String id) {
     this.id = id;
   }

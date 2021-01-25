@@ -26,13 +26,16 @@ import org.apache.ibatis.cache.Cache;
  *
  * @author Clinton Begin
  */
-//LRU-最近最少使用淘汰
+// LRU-最近最少使用淘汰，装饰器模式
 public class LruCache implements Cache {
 
+  //持有一个Cache的实现类
   private final Cache delegate;
+  //用于实现LRU算法的LinkedHashMap
   private Map<Object, Object> keyMap;
   private Object eldestKey;
 
+  //构造方法，使用的Cache接口的实现类必须传入。缓存大小设置为1024
   public LruCache(Cache delegate) {
     this.delegate = delegate;
     setSize(1024);
@@ -48,12 +51,16 @@ public class LruCache implements Cache {
     return delegate.getSize();
   }
 
+  //设置size,在构造方法中被调用，为类属性keyMap(用于实现LRU算法)
   public void setSize(final int size) {
+    //构造一个LinkedHashMap，size为参数size
     keyMap = new LinkedHashMap<Object, Object>(size, .75F, true) {
       private static final long serialVersionUID = 4267176411845948333L;
 
+      //重写LinkedHashMap的removeEldestEntry()方法 删除最近最少使用的节点
       @Override
       protected boolean removeEldestEntry(Map.Entry<Object, Object> eldest) {
+        //若keyMap(LinkedHashMap)中的节点数量已经大于设置的缓存大小
         boolean tooBig = size() > size;
         if (tooBig) {
           eldestKey = eldest.getKey();
@@ -91,6 +98,7 @@ public class LruCache implements Cache {
     return null;
   }
 
+  //循环key列表
   private void cycleKeyList(Object key) {
     keyMap.put(key, key);
     if (eldestKey != null) {

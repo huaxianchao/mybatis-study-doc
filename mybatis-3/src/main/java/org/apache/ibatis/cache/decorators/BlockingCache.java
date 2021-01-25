@@ -34,6 +34,7 @@ import org.apache.ibatis.cache.CacheException;
  * @author Eduardo Macarron
  *
  */
+//基于Lock锁的缓存实现
 public class BlockingCache implements Cache {
 
   private long timeout;
@@ -99,6 +100,7 @@ public class BlockingCache implements Cache {
   
   private void acquireLock(Object key) {
     Lock lock = getLockForKey(key);
+    //若timeout大于0，则 使用带超时时间的API上锁
     if (timeout > 0) {
       try {
         boolean acquired = lock.tryLock(timeout, TimeUnit.MILLISECONDS);
@@ -108,13 +110,16 @@ public class BlockingCache implements Cache {
       } catch (InterruptedException e) {
         throw new CacheException("Got interrupted while trying to acquire lock for key " + key, e);
       }
-    } else {
+    }
+    //若timeout小于0，则 直接上锁，会导致当前线程阻塞
+    else {
       lock.lock();
     }
   }
   
   private void releaseLock(Object key) {
     ReentrantLock lock = locks.get(key);
+    //若 锁 被当前线程持有，释放锁
     if (lock.isHeldByCurrentThread()) {
       lock.unlock();
     }

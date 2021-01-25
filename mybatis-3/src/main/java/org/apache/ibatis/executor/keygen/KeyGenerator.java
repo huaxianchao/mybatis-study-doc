@@ -23,6 +23,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 /**
  * @author Clinton Begin
  */
+//key生成器
 public interface KeyGenerator {
 
   void processBefore(Executor executor, MappedStatement ms, Statement stmt, Object parameter);

@@ -29,8 +29,10 @@ import org.apache.ibatis.cache.Cache;
  *
  * @author Clinton Begin
  */
+//软引用缓存装饰器
 public class SoftCache implements Cache {
   private final Deque<Object> hardLinksToAvoidGarbageCollection;
+  //关联队列，记录将被GC的软引用节点的key
   private final ReferenceQueue<Object> queueOfGarbageCollectedEntries;
   private final Cache delegate;
   private int numberOfHardLinks;
@@ -106,6 +108,7 @@ public class SoftCache implements Cache {
     return null;
   }
 
+  //删除即将被GC的节点
   private void removeGarbageCollectedItems() {
     SoftEntry sv;
     while ((sv = (SoftEntry) queueOfGarbageCollectedEntries.poll()) != null) {
@@ -113,6 +116,7 @@ public class SoftCache implements Cache {
     }
   }
 
+  //软引用节点
   private static class SoftEntry extends SoftReference<Object> {
     private final Object key;
 

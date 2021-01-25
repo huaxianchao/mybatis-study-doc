@@ -152,7 +152,7 @@ public class TypeAliasRegistry {
     registerAlias(alias, type);
   }
 
-  /**具体注册到HashMap容器的方法
+  /**具体注册别名到HashMap容器的方法
    * @param: alias --value.getSimpleName()
    * @param: value --Class
    * @Return: void
@@ -182,6 +182,7 @@ public class TypeAliasRegistry {
   /**
    * @since 3.2.2
    */
+  //获取类型别名集合
   public Map<String, Class<?>> getTypeAliases() {
     return Collections.unmodifiableMap(TYPE_ALIASES);
   }

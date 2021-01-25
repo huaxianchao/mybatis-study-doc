@@ -209,10 +209,11 @@ public class MapperMethod {
 
   }
 
-  //内部类，SQL命令
+  //内部类，SQL命令类
   public static class SqlCommand {
 
     private final String name;
+    //类型：枚举值，UNKNOWN, INSERT, UPDATE, DELETE, SELECT, FLUSH;
     private final SqlCommandType type;
 
     public SqlCommand(Configuration configuration, Class<?> mapperInterface, Method method) {

@@ -27,16 +27,17 @@ import org.apache.ibatis.session.ResultHandler;
 /**
  * @author Clinton Begin
  */
+//Statement处理器,负责管理Statement的创建及与数据库的交互
 public interface StatementHandler {
 
   //创建一个具体的Statement类型的实例(可以是Statement的子类，如PrepareStatement)
-  //在SqlSession接收到指令操作时，有Configuration的newStatementHandler创建，
+  //在SqlSession接收到指令操作时，由Configuration的newStatementHandler创建，
   //  意味着newStatementHandler是被Executor的查询，更新(增，删，改)触发的
   //  即StatementHandler是由Executor负责管理和创建的
   Statement prepare(Connection connection)
       throws SQLException;
 
-  //初始化Statement实例并对sql占位符赋值
+  //初始化Statement实例,并对sql占位符赋值
   void parameterize(Statement statement)
       throws SQLException;
 
@@ -51,8 +52,10 @@ public interface StatementHandler {
   <E> List<E> query(Statement statement, ResultHandler resultHandler)
       throws SQLException;
 
+  //获取BoundSql
   BoundSql getBoundSql();
 
+  //获取参数处理器
   ParameterHandler getParameterHandler();
 
 }

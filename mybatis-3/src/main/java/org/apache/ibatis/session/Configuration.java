@@ -97,9 +97,9 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 public class Configuration {
 
   protected Environment environment;
-  // 允许在嵌套语句中使用分页（RowBounds）。如果允许使用则设置为false。默认为false
+  // 允许在嵌套语句中使用分页（RowBounds）。默认为false
   protected boolean safeRowBoundsEnabled = false;
-  // 允许在嵌套语句中使用分页（ResultHandler）。如果允许使用则设置为false。
+  // 允许在嵌套语句中使用分页（ResultHandler）。如果允许使用则设置为false。默认为true
   protected boolean safeResultHandlerEnabled = true;
   // 是否开启自动驼峰命名规则（camel case）映射，即从经典数据库列名 A_COLUMN 到经典 Java 属性名 aColumn 的类似映射。默认false
   protected boolean mapUnderscoreToCamelCase = false;
@@ -149,7 +149,7 @@ public class Configuration {
   protected boolean lazyLoadingEnabled = false;
   // 指定 Mybatis 创建具有延迟加载能力的对象所用到的代理工具。MyBatis 3.3+使用JAVASSIST
   protected ProxyFactory proxyFactory = new JavassistProxyFactory(); // #224 Using internal Javassist instead of OGNL
-  // MyBatis 可以根据不同的数据库厂商执行不同的语句，这种多厂商的支持是基于映射语句中的 databaseId 属性
+  // MyBatis 可以根据不同的数据库厂商执行不同的语句，这种多厂商的支持是基于映射语句中的 databaseId 属性，不同厂商的数据库的databaseId不同
   protected String databaseId;
   /**
    * Configuration factory class.

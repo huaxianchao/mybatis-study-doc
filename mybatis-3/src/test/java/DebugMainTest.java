@@ -120,6 +120,7 @@ public class DebugMainTest {
     @Test
     public void testSqlsessionQuery() {
         SqlSession sqlSession = sqlSessionFactory.openSession();
+        //这一行实际返回的是UserMapper的动态代理
         UserMapper mapper = sqlSession.getMapper(UserMapper.class);
         User user = new User();
         user.setId(2);

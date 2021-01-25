@@ -24,11 +24,17 @@ import org.apache.ibatis.logging.LogFactory;
 /**
  * @author Clinton Begin
  */
+//日志类型的Cache，记录缓存命中及SQL等，装饰器模式
 public class LoggingCache implements Cache {
 
-  private Log log;  
+  private Log log;
+  /**
+   * 装饰的缓存对象，默认是{@link org.apache.ibatis.cache.impl.PerpetualCache}
+   */
   private Cache delegate;
+  //请求数
   protected int requests = 0;
+  //命中率
   protected int hits = 0;
 
   public LoggingCache(Cache delegate) {
@@ -89,6 +95,7 @@ public class LoggingCache implements Cache {
     return delegate.equals(obj);
   }
 
+  //计算命中率，命中数/请求总数
   private double getHitRatio() {
     return (double) hits / (double) requests;
   }

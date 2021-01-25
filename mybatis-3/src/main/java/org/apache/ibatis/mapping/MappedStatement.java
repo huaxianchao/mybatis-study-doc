@@ -47,6 +47,7 @@ public final class MappedStatement {
   private StatementType statementType;
   private ResultSetType resultSetType;
   private SqlSource sqlSource;
+  //缓存
   private Cache cache;
   private ParameterMap parameterMap;
   private List<ResultMap> resultMaps;
@@ -75,6 +76,7 @@ public final class MappedStatement {
 
   /**
    *在{@link org.apache.ibatis.builder.MapperBuilderAssistant 中使用}
+   * 内置类Builder建造者模式
    */
   public static class Builder {
       //MappedStatement的构建方法被禁用了，这里使用创建者模式，通过Builder类创建并未属性赋值
