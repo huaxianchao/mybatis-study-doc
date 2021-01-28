@@ -37,6 +37,7 @@ public class RoutingStatementHandler implements StatementHandler {
 
   private final StatementHandler delegate;
 
+  //根据类型创建装饰的Statement类型
   public RoutingStatementHandler(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
 
     switch (ms.getStatementType()) {
@@ -55,6 +56,7 @@ public class RoutingStatementHandler implements StatementHandler {
 
   }
 
+  //实际调用的是 Statement/PrepareStatement/CallableStatement的prepare，装饰模式
   @Override
   public Statement prepare(Connection connection) throws SQLException {
     return delegate.prepare(connection);

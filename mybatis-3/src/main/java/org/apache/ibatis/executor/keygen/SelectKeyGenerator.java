@@ -33,7 +33,9 @@ import org.apache.ibatis.session.RowBounds;
 public class SelectKeyGenerator implements KeyGenerator {
   
   public static final String SELECT_KEY_SUFFIX = "!selectKey";
+  //是否在执行前执行
   private boolean executeBefore;
+  //对应的MappedStatement
   private MappedStatement keyStatement;
 
   public SelectKeyGenerator(MappedStatement keyStatement, boolean executeBefore) {
@@ -58,7 +60,9 @@ public class SelectKeyGenerator implements KeyGenerator {
   private void processGeneratedKeys(Executor executor, MappedStatement ms, Object parameter) {
     try {
       if (parameter != null && keyStatement != null && keyStatement.getKeyProperties() != null) {
+        //获取keyProperties
         String[] keyProperties = keyStatement.getKeyProperties();
+        //获取Configuration
         final Configuration configuration = ms.getConfiguration();
         final MetaObject metaParam = configuration.newMetaObject(parameter);
         if (keyProperties != null) {

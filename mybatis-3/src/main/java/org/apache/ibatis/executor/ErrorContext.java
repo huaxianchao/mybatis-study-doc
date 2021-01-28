@@ -18,10 +18,10 @@ package org.apache.ibatis.executor;
 /**
  * @author Clinton Begin
  */
-//错误环境，单例模式
+//异常上下文，单例模式
 public class ErrorContext {
 
-  //行号分隔符
+  //行号分隔符，从当前操作系统中获取
   private static final String LINE_SEPARATOR = System.getProperty("line.separator","\n");
   //绑定到ThreadLocal<>，只在当前线程使用的时候，是线程安全的，但是这样在并发的情况下就不是单例的了
   private static final ThreadLocal<ErrorContext> LOCAL = new ThreadLocal<ErrorContext>();
@@ -54,6 +54,7 @@ public class ErrorContext {
   }
 
   public ErrorContext recall() {
+    //如果已经创建过了
     if (stored != null) {
       LOCAL.set(stored);
       stored = null;

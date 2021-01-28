@@ -82,11 +82,13 @@ public class LruCache implements Cache {
     return delegate.getObject(key);
   }
 
+  //移除 参数key对应的缓存节点
   @Override
   public Object removeObject(Object key) {
     return delegate.removeObject(key);
   }
 
+  //清除缓存
   @Override
   public void clear() {
     delegate.clear();

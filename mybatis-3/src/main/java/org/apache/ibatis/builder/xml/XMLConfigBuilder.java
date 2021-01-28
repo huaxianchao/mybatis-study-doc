@@ -105,23 +105,34 @@ public class XMLConfigBuilder extends BaseBuilder {
     return configuration;
   }
 
-  //具体解析的逻辑
+  //具体解析的逻辑，根节点是 /configuration
   private void parseConfiguration(XNode root) {
     try {
       //issue #117 read properties first
+      //解析 properties 节点
       propertiesElement(root.evalNode("properties"));
+      //解析 settings 节点
       Properties settings = settingsAsProperties(root.evalNode("settings"));
       loadCustomVfs(settings);
+      //解析 typeAliases 节点
       typeAliasesElement(root.evalNode("typeAliases"));
+      //解析 plugins 节点
       pluginElement(root.evalNode("plugins"));
+      //解析 objectFactory 节点
       objectFactoryElement(root.evalNode("objectFactory"));
+      //解析 objectWrapperFactory 节点
       objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
+      //解析 reflectionFactory 节点
       reflectionFactoryElement(root.evalNode("reflectionFactory"));
       settingsElement(settings);
+      //解析 environments 节点
       // read it after objectFactory and objectWrapperFactory issue #631
       environmentsElement(root.evalNode("environments"));
+      //解析 databaseIdProvider 节点
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
+      //解析 typeHandlers 节点
       typeHandlerElement(root.evalNode("typeHandlers"));
+      //解析 mappers 节点
       mapperElement(root.evalNode("mappers"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
@@ -267,13 +278,17 @@ public class XMLConfigBuilder extends BaseBuilder {
     configuration.setConfigurationFactory(resolveClass(props.getProperty("configurationFactory")));
   }
 
+  //解析environments节点，参数是<enviroments>根节点
   private void environmentsElement(XNode context) throws Exception {
     if (context != null) {
       if (environment == null) {
         environment = context.getStringAttribute("default");
       }
+      //遍历<enviroments>的所有子节点
       for (XNode child : context.getChildren()) {
+        //获取节点id
         String id = child.getStringAttribute("id");
+        //当执行该方法时，主环境已经解析完毕，所以此时只解析其它环境
         if (isSpecifiedEnvironment(id)) {
           TransactionFactory txFactory = transactionManagerElement(child.evalNode("transactionManager"));
           DataSourceFactory dsFactory = dataSourceElement(child.evalNode("dataSource"));
@@ -391,6 +406,7 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+  //是否是其它的环境，当前已经解析了主环境-enviroment,可以配置多个环境，除主环境外的称为其它环境
   private boolean isSpecifiedEnvironment(String id) {
     if (environment == null) {
       throw new BuilderException("No environment specified.");

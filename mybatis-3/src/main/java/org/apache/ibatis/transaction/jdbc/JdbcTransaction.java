@@ -47,7 +47,7 @@ public class JdbcTransaction implements Transaction {
   protected DataSource dataSource;
   //事务隔离级别
   protected TransactionIsolationLevel level;
-  //是否自动提交，非包装类型，默认为值在false
+  //是否自动提交，非包装类型，默认值为false
   protected boolean autoCommmit;
 
   public JdbcTransaction(DataSource ds, TransactionIsolationLevel desiredLevel, boolean desiredAutoCommit) {

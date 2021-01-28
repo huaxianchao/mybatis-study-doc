@@ -34,12 +34,20 @@ import org.apache.ibatis.session.Configuration;
 /**
  * @author Clinton Begin
  */
+/**从一个{@link SqlSource}中获取并已对其静态内容处理过的实际的SQL字符串
+ * 这个SQL字符串可能包含SQL占位符 "?" 和参数映射集List(有序)，以及对参数映射集中每个元素的相关信息(至少有每个元素的要读取的属性参数属性名)
+ */ 
 public class BoundSql {
 
+  //SQL字符串，可能包含 占位符"？"
   private String sql;
+  //参数映射集
   private List<ParameterMapping> parameterMappings;
+  //参数对象
   private Object parameterObject;
+  //参数映射集的相关信息
   private Map<String, Object> additionalParameters;
+  //工具类
   private MetaObject metaParameters;
 
   public BoundSql(Configuration configuration, String sql, List<ParameterMapping> parameterMappings, Object parameterObject) {
@@ -62,7 +70,9 @@ public class BoundSql {
     return parameterObject;
   }
 
+  //根据参数查询，是否有对应的相关信息
   public boolean hasAdditionalParameter(String name) {
+    //属性标记器
     PropertyTokenizer prop = new PropertyTokenizer(name);
     String indexedName = prop.getIndexedName();
     return additionalParameters.containsKey(indexedName);
@@ -72,6 +82,7 @@ public class BoundSql {
     metaParameters.setValue(name, value);
   }
 
+  //根据参数获取对应的相关信息
   public Object getAdditionalParameter(String name) {
     return metaParameters.getValue(name);
   }

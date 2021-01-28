@@ -35,7 +35,7 @@ import java.util.*;
  * @author Eduardo Macarron
  * @author Lasse Voss
  */
-//MapperMethod方法，对Mapper中的Method方法进行一层封装
+//MapperMethod方法，对Mapper接口中的Method方法 进行一层封装
 public class MapperMethod {
 
   private final SqlCommand command;
@@ -81,7 +81,7 @@ public class MapperMethod {
         //以返回多条记录的形式执行
         result = executeForMany(sqlSession, args);
       }
-      //若mapper方法使用了@KeyMap注解，且(mapper方法的返回值类型不是void 或 mapper方法没有解析器 )
+      //若mapper方法使用了@KeyMap注解，且(mapper方法的返回值类型不是void 或 mapper方法没有指定解析器 )
       else if (method.returnsMap()) {
         //以返回Map的形式执行
         result = executeForMap(sqlSession, args);

@@ -66,6 +66,7 @@ public abstract class BaseExecutor implements Executor {
   //关闭标识
   private boolean closed;
 
+  //构造方法需要传入Configuration和 Transaction
   protected BaseExecutor(Configuration configuration, Transaction transaction) {
     this.transaction = transaction;
     this.deferredLoads = new ConcurrentLinkedQueue<DeferredLoad>();
@@ -149,7 +150,7 @@ public abstract class BaseExecutor implements Executor {
     if (closed) {
       throw new ExecutorException("Executor was closed.");
     }
-    //若查询栈深度为0 且 指定要刷新缓存
+    //若当前查询栈深度为0 且 指定要刷新缓存
     if (queryStack == 0 && ms.isFlushCacheRequired()) {
       //刷新缓存
       clearLocalCache();

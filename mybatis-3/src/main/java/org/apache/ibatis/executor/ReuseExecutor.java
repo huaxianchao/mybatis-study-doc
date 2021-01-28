@@ -37,6 +37,8 @@ import org.apache.ibatis.transaction.Transaction;
  */
 public class ReuseExecutor extends BaseExecutor {
 
+  //对创建过的Statement做缓存，享元模式
+  // key->string SQL  value->Statement instance
   private final Map<String, Statement> statementMap = new HashMap<String, Statement>();
 
   public ReuseExecutor(Configuration configuration, Transaction transaction) {
@@ -59,6 +61,7 @@ public class ReuseExecutor extends BaseExecutor {
     return handler.<E>query(stmt, resultHandler);
   }
 
+  //刷新Statement
   @Override
   public List<BatchResult> doFlushStatements(boolean isRollback) throws SQLException {
     for (Statement stmt : statementMap.values()) {
@@ -68,6 +71,7 @@ public class ReuseExecutor extends BaseExecutor {
     return Collections.emptyList();
   }
 
+  //获取PrepareStatement instance，若缓存中存在，直接从缓存中取出，若缓存中不存在，生成Statement instance并添加到缓存中
   private Statement prepareStatement(StatementHandler handler, Log statementLog) throws SQLException {
     Statement stmt;
     BoundSql boundSql = handler.getBoundSql();
@@ -83,6 +87,7 @@ public class ReuseExecutor extends BaseExecutor {
     return stmt;
   }
 
+  //缓存中是否存在需要的获取PrepareStatement instance，根据SQL查询，SQL是缓存的key
   private boolean hasStatementFor(String sql) {
     try {
       return statementMap.keySet().contains(sql) && !statementMap.get(sql).getConnection().isClosed();
@@ -91,10 +96,12 @@ public class ReuseExecutor extends BaseExecutor {
     }
   }
 
+  //从缓存中获取Statement
   private Statement getStatement(String s) {
     return statementMap.get(s);
   }
 
+  //向缓存中添加Statement
   private void putStatement(String sql, Statement stmt) {
     statementMap.put(sql, stmt);
   }

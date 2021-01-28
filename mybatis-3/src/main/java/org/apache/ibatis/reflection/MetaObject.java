@@ -32,10 +32,15 @@ import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
  */
 public class MetaObject {
 
+  //原对象
   private Object originalObject;
+  //对象装饰
   private ObjectWrapper objectWrapper;
+  //对象工厂
   private ObjectFactory objectFactory;
+  //对象装饰工厂
   private ObjectWrapperFactory objectWrapperFactory;
+  //反射工厂
   private ReflectorFactory reflectorFactory;
 
   private MetaObject(Object object, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory, ReflectorFactory reflectorFactory) {

@@ -20,12 +20,15 @@ import org.apache.ibatis.executor.ErrorContext;
 /**
  * @author Clinton Begin
  */
+//异常工厂
 public class ExceptionFactory {
 
   private ExceptionFactory() {
     // Prevent Instantiation
+    //防止外部通过构造方法构造对象
   }
 
+  //包装异常
   public static RuntimeException wrapException(String message, Exception e) {
     return new PersistenceException(ErrorContext.instance().message(message).cause(e).toString(), e);
   }

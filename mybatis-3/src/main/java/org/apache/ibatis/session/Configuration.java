@@ -93,7 +93,8 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 /**
  * @author Clinton Begin
  */
-//环境配置信息，Mybtis初始化过程中的核心对象，几乎全部的配置信息保存在该对象中，在Mybatis初始化时创建，且全局唯一
+//环境配置信息，Mybtis初始化过程中的核心对象，几乎全部的配置信息保存在该对象中，
+// 在Mybatis初始化时创建，且在生命周期中是全局唯一的
 public class Configuration {
 
   protected Environment environment;
@@ -198,6 +199,7 @@ public class Configuration {
     this.environment = environment;
   }
 
+  //无参构造，注册别名
   public Configuration() {
     // 内置别名注册
     typeAliasRegistry.registerAlias("JDBC", JdbcTransactionFactory.class);
@@ -529,7 +531,18 @@ public class Configuration {
     resultSetHandler = (ResultSetHandler) interceptorChain.pluginAll(resultSetHandler);
     return resultSetHandler;
   }
-  //创建StatementHandler的方法，默认创建的是RoutingStatementHandler
+
+  /**创建StatementHandler的方法，默认创建的是RoutingStatementHandler,
+   * RoutingStatement内部是装饰器模式，装饰了Statement/PrepareStatement/CallableStatementHandler
+   * {@link RoutingStatementHandler}
+   * @param: executor
+   * @param: mappedStatement
+   * @param: parameterObject
+   * @param: rowBounds
+   * @param: resultHandler
+   * @param: boundSql
+   * @Return: org.apache.ibatis.executor.statement.StatementHandler
+   */ 
   public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
     StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
     statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
@@ -542,6 +555,7 @@ public class Configuration {
 
   //创建执行器--这里是简单工厂模式
   public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
+    //若未指定executorType，则使用默认的(SimpleExecutor)，否则创建指定类型的Executor todo 这两行代码是否重复了
     executorType = executorType == null ? defaultExecutorType : executorType;
     //若执行器类型未传入，则默认使用SIMPLE执行器
     executorType = executorType == null ? ExecutorType.SIMPLE : executorType;

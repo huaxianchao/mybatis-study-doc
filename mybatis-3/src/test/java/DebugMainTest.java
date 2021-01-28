@@ -30,6 +30,7 @@ public class DebugMainTest {
     private MappedStatement getByIdStatement;
     private MappedStatement updateStatement;
 
+    //初始化
     @Before
     public void init() throws SQLException {
         InputStream inputStream = DebugMainTest.class.getResourceAsStream("mybatis-config.xml");
@@ -41,7 +42,7 @@ public class DebugMainTest {
     }
 
     @Test
-    public void testSqlSession(){
+    public void testSqlSession() {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         Object o = sqlSession.selectOne("com.hy.mapper.UserMapper.getById", 1);
         System.out.println(o);
@@ -129,4 +130,5 @@ public class DebugMainTest {
         //说明：必须提交才能在数据库中见到更新结果
         sqlSession.commit();
     }
+
 }
