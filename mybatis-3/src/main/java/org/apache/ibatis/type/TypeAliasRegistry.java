@@ -38,6 +38,8 @@ import org.apache.ibatis.io.Resources;
 //类型别名注册器，内部使用一个HashMap作为容器，在构造方法中将一些常用的注册进了HashMap中
 public class TypeAliasRegistry {
 
+  //实际的容器,Hashmap： key->别名，value->Class
+  //使用时候多在类加载中进行，无需考虑线程安全
   private final Map<String, Class<?>> TYPE_ALIASES = new HashMap<String, Class<?>>();
 
   public TypeAliasRegistry() {
@@ -103,6 +105,10 @@ public class TypeAliasRegistry {
 
   @SuppressWarnings("unchecked")
   // throws class cast exception as well if types cannot be assigned
+  /**解析
+   * @param: string 别名
+   * @Return: java.lang.Class<T> 对应的Class
+   */ 
   public <T> Class<T> resolveAlias(String string) {
     try {
       if (string == null) {
@@ -111,9 +117,12 @@ public class TypeAliasRegistry {
       // issue #748
       String key = string.toLowerCase(Locale.ENGLISH);
       Class<T> value;
+      //转化为全小写作为key从HashMap容器中查询
       if (TYPE_ALIASES.containsKey(key)) {
         value = (Class<T>) TYPE_ALIASES.get(key);
-      } else {
+      }
+      //若容器中未查询到，不转化为小写，按照参数原样作为类名使用Resources查询（类加载器）
+      else {
         value = (Class<T>) Resources.classForName(string);
       }
       return value;

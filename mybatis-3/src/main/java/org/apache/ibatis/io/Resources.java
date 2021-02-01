@@ -30,6 +30,7 @@ import java.util.Properties;
  *
  * @author Clinton Begin
  */
+//简化 通过类加载器访问资源 的类
 public class Resources {
 
   private static ClassLoaderWrapper classLoaderWrapper = new ClassLoaderWrapper();

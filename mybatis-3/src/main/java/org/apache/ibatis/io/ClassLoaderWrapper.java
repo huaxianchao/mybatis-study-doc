@@ -23,9 +23,12 @@ import java.net.URL;
  *
  * @author Clinton Begin
  */
+//  ClassLoader装饰器 包装了对多个类加载器的访问，使他们可以作为一个类工作
 public class ClassLoaderWrapper {
 
+  //默认类加载器
   ClassLoader defaultClassLoader;
+  //系统类加载器
   ClassLoader systemClassLoader;
 
   ClassLoaderWrapper() {
