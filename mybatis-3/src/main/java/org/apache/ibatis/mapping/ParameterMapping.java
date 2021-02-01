@@ -25,23 +25,34 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 /**
  * @author Clinton Begin
  */
+//参数映射
 public class ParameterMapping {
 
+  //环境配置
   private Configuration configuration;
 
   private String property;
   private ParameterMode mode;
+  //对应的java类型，默认是Object类型
   private Class<?> javaType = Object.class;
+  //对应的jdbcType
   private JdbcType jdbcType;
+  //数字刻度
   private Integer numericScale;
+  //类型处理器
   private TypeHandler<?> typeHandler;
+  //ResultMap的id
   private String resultMapId;
+  //jdbcTypeName
   private String jdbcTypeName;
+  //表达式
   private String expression;
 
+  //私有无参构造
   private ParameterMapping() {
   }
 
+  //建造者模式
   public static class Builder {
     private ParameterMapping parameterMapping = new ParameterMapping();
 
@@ -99,7 +110,9 @@ public class ParameterMapping {
       return this;
     }
 
+    //构建完成返回instance
     public ParameterMapping build() {
+      //解析 类型处理器
       resolveTypeHandler();
       validate();
       return parameterMapping;
@@ -121,6 +134,7 @@ public class ParameterMapping {
       }
     }
 
+    //解析类型处理器
     private void resolveTypeHandler() {
       if (parameterMapping.typeHandler == null && parameterMapping.javaType != null) {
         Configuration configuration = parameterMapping.configuration;

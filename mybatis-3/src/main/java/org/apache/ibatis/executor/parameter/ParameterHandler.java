@@ -23,6 +23,9 @@ import java.sql.SQLException;
  *
  * @author Clinton Begin
  */
+/**参数处理器接口-处理{@link PreparedStatement}的参数
+ * 只有一个实现，{@link org.apache.ibatis.scripting.defaults.DefaultParameterHandler}
+ */
 public interface ParameterHandler {
 
   Object getParameterObject();

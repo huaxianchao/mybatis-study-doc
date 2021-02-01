@@ -38,13 +38,18 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
  */
 public class DefaultParameterHandler implements ParameterHandler {
 
+  //类型处理器注册器，从MappedStatement中获取Configuration再获取该属性
   private final TypeHandlerRegistry typeHandlerRegistry;
-
+  //要处理的MappedStatement
   private final MappedStatement mappedStatement;
+  //参数对象
   private final Object parameterObject;
+  //BoundSql
   private BoundSql boundSql;
+  //环境配置,从MappedStatement属性中获取
   private Configuration configuration;
 
+  //构造方法
   public DefaultParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
     this.mappedStatement = mappedStatement;
     this.configuration = mappedStatement.getConfiguration();
@@ -58,12 +63,17 @@ public class DefaultParameterHandler implements ParameterHandler {
     return parameterObject;
   }
 
+  //设置参数的方法
   @Override
   public void setParameters(PreparedStatement ps) {
     ErrorContext.instance().activity("setting parameters").object(mappedStatement.getParameterMap().getId());
+    //获取BoundSql的参数映射集
     List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
+    //若获取的参数映射集不为空
     if (parameterMappings != null) {
+      //遍历参数映射集
       for (int i = 0; i < parameterMappings.size(); i++) {
+        //取出每一个元素--参数映射 todo
         ParameterMapping parameterMapping = parameterMappings.get(i);
         if (parameterMapping.getMode() != ParameterMode.OUT) {
           Object value;

@@ -215,6 +215,7 @@ public abstract class BaseExecutor implements Executor {
     List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
     TypeHandlerRegistry typeHandlerRegistry = ms.getConfiguration().getTypeHandlerRegistry();
     // mimic DefaultParameterHandler logic
+    //模仿默认参数处理器的逻辑
     for (int i = 0; i < parameterMappings.size(); i++) {
       ParameterMapping parameterMapping = parameterMappings.get(i);
       if (parameterMapping.getMode() != ParameterMode.OUT) {
@@ -271,6 +272,7 @@ public abstract class BaseExecutor implements Executor {
     }
   }
 
+  //清除缓存
   @Override
   public void clearLocalCache() {
     if (!closed) {

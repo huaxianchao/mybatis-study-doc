@@ -28,6 +28,8 @@ import org.apache.ibatis.executor.BatchResult;
  *
  * @author Clinton Begin
  */
+//供用户使用的api，提供了比Executor更加简单易使用的接口
+// 实际实行数据库操作的是Executor，是Executor的门面模式
 public interface SqlSession extends Closeable {
 
   /**

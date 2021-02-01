@@ -23,6 +23,7 @@ import java.util.List;
 /**
  * @author Clinton Begin
  */
+//缓存的Key，实现了Cloneable方法，使用深拷贝模式
 public class CacheKey implements Cloneable, Serializable {
 
   private static final long serialVersionUID = 1146682552656046210L;
@@ -36,6 +37,7 @@ public class CacheKey implements Cloneable, Serializable {
   private int hashcode;
   private long checksum;
   private int count;
+  //更新列表
   private List<Object> updateList;
 
   public CacheKey() {
@@ -54,8 +56,11 @@ public class CacheKey implements Cloneable, Serializable {
     return updateList.size();
   }
 
+  //更新
   public void update(Object object) {
+    //若参数不为空 且 参数是数组类型
     if (object != null && object.getClass().isArray()) {
+      //遍历数组
       int length = Array.getLength(object);
       for (int i = 0; i < length; i++) {
         Object element = Array.get(object, i);
@@ -67,6 +72,8 @@ public class CacheKey implements Cloneable, Serializable {
   }
 
   private void doUpdate(Object object) {
+    //计算 局部变量baseHashCode
+    //若 object ==null baseHashCode=1,否则baseHashCode = 对象的hashCode
     int baseHashCode = object == null ? 1 : object.hashCode();
 
     count++;
@@ -136,9 +143,13 @@ public class CacheKey implements Cloneable, Serializable {
     return returnValue.toString();
   }
 
+
+  //深拷贝模式，重写clone方法
   @Override
   public CacheKey clone() throws CloneNotSupportedException {
+    //调用父类的clone方法
     CacheKey clonedCacheKey = (CacheKey) super.clone();
+    //将引用属性ypdateList进行深拷贝
     clonedCacheKey.updateList = new ArrayList<Object>(updateList);
     return clonedCacheKey;
   }

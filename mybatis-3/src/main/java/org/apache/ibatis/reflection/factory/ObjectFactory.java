@@ -23,6 +23,7 @@ import java.util.Properties;
  * 
  * @author Clinton Begin
  */
+//创建对象的对象工厂接口
 public interface ObjectFactory {
 
   /**

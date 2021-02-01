@@ -43,7 +43,7 @@ import org.apache.ibatis.session.SqlSession;
  *
  * @author Clinton Begin
  */
-//SqlSession的默认实现类，该类不是线程安全的
+//SqlSession的默认实现类，todo:注意 该类不是线程安全的
 public class DefaultSqlSession implements SqlSession {
 
   //当前环境
@@ -81,6 +81,7 @@ public class DefaultSqlSession implements SqlSession {
   @Override
   public <T> T selectOne(String statement, Object parameter) {
     // Popular vote was to return null on 0 results and throw exception on too many.
+    // 通用的做法试试在0时返回null,在多条的时候返回 too many Exception
     List<T> list = this.<T>selectList(statement, parameter);
     if (list.size() == 1) {
       return list.get(0);
@@ -101,8 +102,10 @@ public class DefaultSqlSession implements SqlSession {
     return this.selectMap(statement, parameter, mapKey, RowBounds.DEFAULT);
   }
 
+  //查询Map
   @Override
   public <K, V> Map<K, V> selectMap(String statement, Object parameter, String mapKey, RowBounds rowBounds) {
+    //先查询查询list
     final List<? extends V> list = selectList(statement, parameter, rowBounds);
     final DefaultMapResultHandler<K, V> mapResultHandler = new DefaultMapResultHandler<K, V>(mapKey,
         configuration.getObjectFactory(), configuration.getObjectWrapperFactory(), configuration.getReflectorFactory());
@@ -149,7 +152,9 @@ public class DefaultSqlSession implements SqlSession {
   @Override
   public void select(String statement, Object parameter, RowBounds rowBounds, ResultHandler handler) {
     try {
+      //从环境配置信息中获取MappedStatement
       MappedStatement ms = configuration.getMappedStatement(statement);
+      //执行executor的query方法
       executor.query(ms, wrapCollection(parameter), rowBounds, handler);
     } catch (Exception e) {
       throw ExceptionFactory.wrapException("Error querying database.  Cause: " + e, e);
@@ -257,7 +262,7 @@ public class DefaultSqlSession implements SqlSession {
   }
 
   @Override
-  //传入接口对应的class对象，获取该mapper接口的代理对象
+  //传入mapper接口对应的class对象，获取该mapper接口的代理对象
   public <T> T getMapper(Class<T> type) {
     return configuration.<T>getMapper(type, this);
   }
@@ -271,6 +276,7 @@ public class DefaultSqlSession implements SqlSession {
     }
   }
 
+  //清除缓存，调用的是executor的清除缓存方法
   @Override
   public void clearCache() {
     executor.clearLocalCache();
@@ -280,6 +286,7 @@ public class DefaultSqlSession implements SqlSession {
     return (!autoCommit && dirty) || force;
   }
 
+  //装饰集合
   private Object wrapCollection(final Object object) {
     if (object instanceof Collection) {
       StrictMap<Object> map = new StrictMap<Object>();
