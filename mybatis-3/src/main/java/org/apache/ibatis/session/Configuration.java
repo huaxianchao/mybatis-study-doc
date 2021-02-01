@@ -171,6 +171,7 @@ public class Configuration {
   protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
   //缓存MappedStatement的Map，key->MappedStatement的id，value->MappedStatement
   protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection");
+  //二级缓存列表，key->缓存的id(nameSpace)，value->缓存对象
   protected final Map<String, Cache> caches = new StrictMap<Cache>("Caches collection");
   protected final Map<String, ResultMap> resultMaps = new StrictMap<ResultMap>("Result Maps collection");
   protected final Map<String, ParameterMap> parameterMaps = new StrictMap<ParameterMap>("Parameter Maps collection");
@@ -189,8 +190,8 @@ public class Configuration {
    * references a cache bound to another namespace and the value is the
    * namespace which the actual cache is bound to.
    */
-  //用于存储使用了<caache-ref/>标签的二级缓存的nameSpace
-  // key :namespace(绑定到其它二级缓存的mapper的namespace)
+  //用于存储 <caache-ref/>标签的nameSpace
+  // key :  namespace(当前mapper.xml的nameSpace)
   // vlaue： 被绑定的mapper的namespace
   protected final Map<String, String> cacheRefMap = new HashMap<String, String>();
 
@@ -534,6 +535,7 @@ public class Configuration {
 
   /**创建StatementHandler的方法，默认创建的是RoutingStatementHandler,
    * RoutingStatement内部是装饰器模式，装饰了Statement/PrepareStatement/CallableStatementHandler
+   * 同事RoutingStatement又是工厂模式，根据传入的MppedStatement的statementType属性决定创造哪个类型的StatementHnadler
    * {@link RoutingStatementHandler}
    * @param: executor
    * @param: mappedStatement

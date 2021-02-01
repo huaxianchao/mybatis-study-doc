@@ -58,15 +58,17 @@ public class CacheKey implements Cloneable, Serializable {
 
   //更新
   public void update(Object object) {
-    //若参数不为空 且 参数是数组类型
+    //若参数不为null 且 参数是数组类型
     if (object != null && object.getClass().isArray()) {
-      //遍历数组
+      //遍历数组，对每个元素进行更新
       int length = Array.getLength(object);
       for (int i = 0; i < length; i++) {
         Object element = Array.get(object, i);
         doUpdate(element);
       }
-    } else {
+    }
+    //若参数为null 或 参数不是数组类型，直接更新
+    else {
       doUpdate(object);
     }
   }

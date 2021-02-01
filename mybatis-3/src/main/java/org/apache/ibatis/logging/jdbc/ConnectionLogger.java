@@ -32,6 +32,7 @@ import org.apache.ibatis.reflection.ExceptionUtil;
  * @author Eduardo Macarron
  * 
  */
+//Connection的代理类，添加了log
 public final class ConnectionLogger extends BaseJdbcLogger implements InvocationHandler {
 
   private Connection connection;
@@ -45,9 +46,11 @@ public final class ConnectionLogger extends BaseJdbcLogger implements Invocation
   public Object invoke(Object proxy, Method method, Object[] params)
       throws Throwable {
     try {
+      //若执行的是从Object中继承来的方法，直接执行并rturn，不打印日志
       if (Object.class.equals(method.getDeclaringClass())) {
         return method.invoke(this, params);
-      }    
+      }
+      //若执行的是prepareStatement的方法，打印处理空格的参数列表
       if ("prepareStatement".equals(method.getName())) {
         if (isDebugEnabled()) {
           debug(" Preparing: " + removeBreakingWhitespace((String) params[0]), true);
@@ -55,7 +58,9 @@ public final class ConnectionLogger extends BaseJdbcLogger implements Invocation
         PreparedStatement stmt = (PreparedStatement) method.invoke(connection, params);
         stmt = PreparedStatementLogger.newInstance(stmt, statementLog, queryStack);
         return stmt;
-      } else if ("prepareCall".equals(method.getName())) {
+      }
+      //若methodName是prepareCall
+      else if ("prepareCall".equals(method.getName())) {
         if (isDebugEnabled()) {
           debug(" Preparing: " + removeBreakingWhitespace((String) params[0]), true);
         }        

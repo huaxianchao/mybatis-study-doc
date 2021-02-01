@@ -24,7 +24,7 @@ import java.sql.SQLException;
  *
  * @author Clinton Begin
  */
-//包装了数据连接Connection，封装方法： 获取连接，提交，回滚，关闭
+//对数据连接Connection进行包装，包装了其生命周期中的获取连接，提交，回滚，关闭的方法
 public interface Transaction {
 
   /**

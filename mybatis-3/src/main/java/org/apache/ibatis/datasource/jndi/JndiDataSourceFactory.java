@@ -33,6 +33,7 @@ public class JndiDataSourceFactory implements DataSourceFactory {
 
   public static final String INITIAL_CONTEXT = "initial_context";
   public static final String DATA_SOURCE = "data_source";
+  //前置节点是env节点
   public static final String ENV_PREFIX = "env.";
 
   private DataSource dataSource;

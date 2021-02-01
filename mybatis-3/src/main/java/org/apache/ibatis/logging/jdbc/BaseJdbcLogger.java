@@ -122,6 +122,10 @@ public abstract class BaseJdbcLogger {
     columnValues.clear();
   }
 
+  /**对参数列表的空格进行处理，方便log打印
+   * @param: original 参数列表的第一个参数
+   * @Return: java.lang.String
+   */
   protected String removeBreakingWhitespace(String original) {
     StringTokenizer whitespaceStripper = new StringTokenizer(original);
     StringBuilder builder = new StringBuilder();

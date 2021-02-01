@@ -186,8 +186,11 @@ public class XMLMapperBuilder extends BaseBuilder {
 
   //<cache-ref>标签的处理
   private void cacheRefElement(XNode context) {
+    //若配置了<cache-ref>标签，即<cache-ref>在mapper xml中存在
     if (context != null) {
+      //向configuration的cacheRefMap属性中添加标签解析结果
       configuration.addCacheRef(builderAssistant.getCurrentNamespace(), context.getStringAttribute("namespace"));
+      //构建CacheRef标签解析器
       CacheRefResolver cacheRefResolver = new CacheRefResolver(builderAssistant, context.getStringAttribute("namespace"));
       try {
         cacheRefResolver.resolveCacheRef();
@@ -197,17 +200,30 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+  //mapper xml文件中的缓存节点<cache>解析
+  //关于<cache>标签的处理都在这里进行，如<cache /size/type...>，但不包括<cache-ref>
   private void cacheElement(XNode context) throws Exception {
+    //若<cache>节点不为空，即mapper xml中存在<cache>标签，则进行二级缓存逻辑
     if (context != null) {
+      //获取<cache>节点的type属性，若typ未配置则设置为PERPETUAL（mybatis的默认缓存实现）
       String type = context.getStringAttribute("type", "PERPETUAL");
+      //使用typeAliasRegister解析type,获取到对应的Class
       Class<? extends Cache> typeClass = typeAliasRegistry.resolveAlias(type);
+      //获取 eviction属性（淘汰策略），若eviction未配置则设置为LRU(最近最久未使用淘汰)
       String eviction = context.getStringAttribute("eviction", "LRU");
+      //使用typeAliasRegister解析eviction,获取到对应的Class
       Class<? extends Cache> evictionClass = typeAliasRegistry.resolveAlias(eviction);
+      //获取<cache>节点的flushInterval属性（刷新间隔）
       Long flushInterval = context.getLongAttribute("flushInterval");
+      //获取<cache>节点的size属性（大小）
       Integer size = context.getIntAttribute("size");
+      //获取<cache>节点的readOnly属性，赋值给readWrite（可读写），未配置的话为false--不可并发读写
       boolean readWrite = !context.getBooleanAttribute("readOnly", false);
+      //获取<cache>节点的blocking属性，赋值给blocking，默认false
       boolean blocking = context.getBooleanAttribute("blocking", false);
+      //获取子节点
       Properties props = context.getChildrenAsProperties();
+      //创建缓存
       builderAssistant.useNewCache(typeClass, evictionClass, flushInterval, size, readWrite, blocking, props);
     }
   }

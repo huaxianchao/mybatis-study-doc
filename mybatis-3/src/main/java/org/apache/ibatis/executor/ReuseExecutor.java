@@ -35,10 +35,11 @@ import org.apache.ibatis.transaction.Transaction;
 /**
  * @author Clinton Begin
  */
+//可复用的Executor
 public class ReuseExecutor extends BaseExecutor {
 
   //对创建过的Statement做缓存，享元模式
-  // key->string SQL  value->Statement instance
+  // key->string SQL语句  value->Statement instance
   private final Map<String, Statement> statementMap = new HashMap<String, Statement>();
 
   public ReuseExecutor(Configuration configuration, Transaction transaction) {

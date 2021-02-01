@@ -22,6 +22,7 @@ import org.apache.ibatis.cache.Cache;
  */
 // <cache-ref> 标签解析器
 public class CacheRefResolver {
+  //Mapper构建助手
   private final MapperBuilderAssistant assistant;
   //被关联的mapper的namespace
   private final String cacheRefNamespace;
@@ -31,6 +32,8 @@ public class CacheRefResolver {
     this.cacheRefNamespace = cacheRefNamespace;
   }
 
+  /**解析CacheRef，实际调用 {@link MapperBuilderAssistant} 的userCacheRef方法
+   */
   public Cache resolveCacheRef() {
     return assistant.useCacheRef(cacheRefNamespace);
   }

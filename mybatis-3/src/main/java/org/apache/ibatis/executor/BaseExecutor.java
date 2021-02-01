@@ -57,6 +57,7 @@ public abstract class BaseExecutor implements Executor {
   protected ConcurrentLinkedQueue<DeferredLoad> deferredLoads;
   //缓存
   protected PerpetualCache localCache;
+  //本地outPut参数缓存，用于CallableStatement的调用
   protected PerpetualCache localOutputParameterCache;
   //环境配置信息
   protected Configuration configuration;
@@ -143,6 +144,11 @@ public abstract class BaseExecutor implements Executor {
     return query(ms, parameter, rowBounds, resultHandler, key, boundSql);
  }
 
+  /**这里是一级缓存的查询逻辑
+   * 先从缓存找查询，若缓存中未查询到再到DB中查询，存入缓存并返回结果
+   * @param: null
+   * @Return: 
+   */
   @SuppressWarnings("unchecked")
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
@@ -161,6 +167,7 @@ public abstract class BaseExecutor implements Executor {
       //当resultHandler == null 时，从缓存中查询，若resultHandler不为null,不从缓存中查询
       list = resultHandler == null ? (List<E>) localCache.getObject(key) : null;
       if (list != null) {
+        //若缓存中查询到结果，对本地输出参数进行处理（仅在CallableStatement类型下下面方法会有效执行）
         handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
       } else {
         list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
@@ -290,6 +297,7 @@ public abstract class BaseExecutor implements Executor {
   protected abstract <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql)
       throws SQLException;
 
+  //关闭Statement
   protected void closeStatement(Statement statement) {
     if (statement != null) {
       try {
@@ -300,7 +308,9 @@ public abstract class BaseExecutor implements Executor {
     }
   }
 
+  //处理本地缓存输出参数
   private void handleLocallyCachedOutputParameters(MappedStatement ms, CacheKey key, Object parameter, BoundSql boundSql) {
+    //若执行的是CallableStatement调用
     if (ms.getStatementType() == StatementType.CALLABLE) {
       final Object cachedParameter = localOutputParameterCache.getObject(key);
       if (cachedParameter != null && parameter != null) {
@@ -332,6 +342,7 @@ public abstract class BaseExecutor implements Executor {
     return list;
   }
 
+  //获取连接
   protected Connection getConnection(Log statementLog) throws SQLException {
     Connection connection = transaction.getConnection();
     if (statementLog.isDebugEnabled()) {

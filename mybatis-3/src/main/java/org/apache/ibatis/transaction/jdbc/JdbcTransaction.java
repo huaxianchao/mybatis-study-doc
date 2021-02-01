@@ -37,17 +37,20 @@ import org.apache.ibatis.transaction.TransactionException;
 /**
  * @author Clinton Begin
  */
-//直接利用JDBC提交和回滚事务
-  //依靠通过DataSource创建的Connection来管理事务的scope
+  //直接利用JDBC提交和回滚事务
+  //依靠通过DataSource创建的Connection来管理事务的生命周期(范围)
+  //延迟连接检索，直到调用getConnection（）
+  //当自动提交开启时，忽略commit或者rollback请求
 public class JdbcTransaction implements Transaction {
 
   private static final Log log = LogFactory.getLog(JdbcTransaction.class);
 
   protected Connection connection;
+  //生成的连接类型，Pooled/Unpooled/JNDI
   protected DataSource dataSource;
   //事务隔离级别
   protected TransactionIsolationLevel level;
-  //是否自动提交，非包装类型，默认值为false
+  //是否自动提交，非包装类型，默认值为false，为true时会忽略commit和rollback请求
   protected boolean autoCommmit;
 
   public JdbcTransaction(DataSource ds, TransactionIsolationLevel desiredLevel, boolean desiredAutoCommit) {
@@ -104,9 +107,10 @@ public class JdbcTransaction implements Transaction {
     }
   }
 
-  //设置自动提交
+  //设置自动提交属性
   protected void setDesiredAutoCommit(boolean desiredAutoCommit) {
     try {
+      //若connection的autoCommit属性不等要设置值，用参数值将原值覆盖
       if (connection.getAutoCommit() != desiredAutoCommit) {
         if (log.isDebugEnabled()) {
           log.debug("Setting autocommit to " + desiredAutoCommit + " on JDBC Connection [" + connection + "]");
@@ -125,7 +129,7 @@ public class JdbcTransaction implements Transaction {
   //重置connection连接的自动提交属性为true
   protected void resetAutoCommit() {
     try {
-      //若当前connection连接的自动提交为false，打印日志
+      //若当前connection连接的自动提交为false，将其设置为true
       if (!connection.getAutoCommit()) {
         // MyBatis does not call commit/rollback on a connection if just selects were performed.
         // Some databases start transactions with select statements
@@ -145,13 +149,14 @@ public class JdbcTransaction implements Transaction {
     }
   }
 
+  //打开连接
   protected void openConnection() throws SQLException {
     if (log.isDebugEnabled()) {
       log.debug("Opening JDBC Connection");
     }
-    //打开连接
+    //从dataSource打开连接
     connection = dataSource.getConnection();
-    //若属性-事务隔离级别不为空，设置connection的事务隔离级别
+    //若 事务隔离级别 不为空，设置connection的事务隔离级别
     if (level != null) {
       connection.setTransactionIsolation(level.getLevel());
     }

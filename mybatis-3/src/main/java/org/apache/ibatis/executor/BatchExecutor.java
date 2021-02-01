@@ -77,6 +77,7 @@ public class BatchExecutor extends BaseExecutor {
     return BATCH_UPDATE_RETURN_VALUE;
   }
 
+  //从数据库中查询数据
   @Override
   public <E> List<E> doQuery(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql)
       throws SQLException {
@@ -84,6 +85,7 @@ public class BatchExecutor extends BaseExecutor {
     try {
       flushStatements();
       Configuration configuration = ms.getConfiguration();
+      //从configuration中获取StatementHandler
       StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameterObject, rowBounds, resultHandler, boundSql);
       Connection connection = getConnection(ms.getStatementLog());
       stmt = handler.prepare(connection);

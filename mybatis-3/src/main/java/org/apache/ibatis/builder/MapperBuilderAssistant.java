@@ -57,7 +57,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
   //当前命名空间
   private String currentNamespace;
   private String resource;
-  //当前缓存
+  //当前缓存,会把这个值赋值给MappedStatement的cache属性-也就是二级缓存
   private Cache currentCache;
   private boolean unresolvedCacheRef; // issue #676
 
@@ -105,19 +105,20 @@ public class MapperBuilderAssistant extends BaseBuilder {
     return currentNamespace + "." + base;
   }
 
-  //使用<cache-ref>注解
+  //使用<cache-ref>标签，再解析mapper.xml/注解时，如果有<cache-ref>标签被调用
   public Cache useCacheRef(String namespace) {
     if (namespace == null) {
       throw new BuilderException("cache-ref element requires a namespace attribute.");
     }
     try {
       unresolvedCacheRef = true;
-      //根据<cache-ref>标签指定的namespace获取其缓存
+      //从Configuration维护的缓存列表中（caches）,根据<cache-ref>标签指定的namespace获取其缓存
+      //即获取要关联的Cache对象
       Cache cache = configuration.getCache(namespace);
       if (cache == null) {
         throw new IncompleteElementException("No cache for namespace '" + namespace + "' could be found.");
       }
-      //将当前mapper的引用也指向 <cache-ref>标签指定的namespace
+      //将当前mapper对象的引用也指向 <cache-ref>标签指定的namespace
       currentCache = cache;
       unresolvedCacheRef = false;
       return cache;
@@ -126,6 +127,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
     }
   }
 
+  //创建新的二级缓存，在解析mapper.xml/注解时，如果有<cache>标签被调用
   public Cache useNewCache(Class<? extends Cache> typeClass,
       Class<? extends Cache> evictionClass,
       Long flushInterval,
@@ -133,6 +135,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
       boolean readWrite,
       boolean blocking,
       Properties props) {
+    //创建Cache对象，建造者模式
     Cache cache = new CacheBuilder(currentNamespace)
         .implementation(valueOrDefault(typeClass, PerpetualCache.class))
         .addDecorator(valueOrDefault(evictionClass, LruCache.class))
@@ -142,6 +145,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
         .blocking(blocking)
         .properties(props)
         .build();
+    //维护Configuration的二级缓存列表
     configuration.addCache(cache);
     currentCache = cache;
     return cache;
