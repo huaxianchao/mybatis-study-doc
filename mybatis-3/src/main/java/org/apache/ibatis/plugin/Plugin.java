@@ -28,20 +28,21 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 /**
  * @author Clinton Begin
  */
-//插件类，实现了InvocationHandler接口
+//插件类，实现了InvocationHandler接口，用于实现动态代理
 public class Plugin implements InvocationHandler {
 
   private Object target;
   private Interceptor interceptor;
   private Map<Class<?>, Set<Method>> signatureMap;
 
+  //构造方法
   private Plugin(Object target, Interceptor interceptor, Map<Class<?>, Set<Method>> signatureMap) {
     this.target = target;
     this.interceptor = interceptor;
     this.signatureMap = signatureMap;
   }
 
-  //静态方法，
+  //静态方法，装饰
   public static Object wrap(Object target, Interceptor interceptor) {
     Map<Class<?>, Set<Method>> signatureMap = getSignatureMap(interceptor);
     Class<?> type = target.getClass();
@@ -69,6 +70,7 @@ public class Plugin implements InvocationHandler {
     }
   }
 
+  //获取签名的map
   private static Map<Class<?>, Set<Method>> getSignatureMap(Interceptor interceptor) {
     Intercepts interceptsAnnotation = interceptor.getClass().getAnnotation(Intercepts.class);
     // issue #251
@@ -93,6 +95,7 @@ public class Plugin implements InvocationHandler {
     return signatureMap;
   }
 
+  //获取所有接口
   private static Class<?>[] getAllInterfaces(Class<?> type, Map<Class<?>, Set<Method>> signatureMap) {
     Set<Class<?>> interfaces = new HashSet<Class<?>>();
     while (type != null) {

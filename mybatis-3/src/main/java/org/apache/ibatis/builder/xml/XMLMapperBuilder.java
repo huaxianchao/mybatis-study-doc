@@ -201,7 +201,7 @@ public class XMLMapperBuilder extends BaseBuilder {
   }
 
   //mapper xml文件中的缓存节点<cache>解析
-  //关于<cache>标签的处理都在这里进行，如<cache /size/type...>，但不包括<cache-ref>
+  //关于<cache>标签的处理都在这里进行，如<cache size/type...>，但不包括<cache-ref>
   private void cacheElement(XNode context) throws Exception {
     //若<cache>节点不为空，即mapper xml中存在<cache>标签，则进行二级缓存逻辑
     if (context != null) {

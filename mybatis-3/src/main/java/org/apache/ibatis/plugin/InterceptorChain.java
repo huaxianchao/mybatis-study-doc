@@ -22,13 +22,20 @@ import java.util.List;
 /**
  * @author Clinton Begin
  */
-//拦截链 -- 责任链模式
+//拦截器链 -- 责任链模式
 public class InterceptorChain {
 
-  //存放拦截器(插件)的集合
+  //存放所有拦截器(插件)的集合
   private final List<Interceptor> interceptors = new ArrayList<Interceptor>();
 
+  /**在{@link org.apache.ibatis.session.Configuration}使用工厂模式创建E
+   *  xecutor,StatementHandler,ParameterHandler，Resulthandler时被调用
+   * 用于扩展mybatis
+   * @param: target
+   * @Return: java.lang.Object
+   */
   public Object pluginAll(Object target) {
+    //遍历所有拦截器，每个拦截器对方法进行处理(是否处理由拦截器自己决定)
     for (Interceptor interceptor : interceptors) {
       target = interceptor.plugin(target);
     }

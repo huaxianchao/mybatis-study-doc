@@ -31,8 +31,9 @@ import org.apache.ibatis.session.RowBounds;
 /**
  * @author Clinton Begin
  */
+//工厂模式，
 //这里也是个装饰模式，但是不同于Executor中的二级缓存的装饰模式，
-// 这里并没有对方法做加强，只是将 按照类型创建对应的StatementHandler子类的对象的逻辑由调用方转移到本类中
+// 这里并没有对方法做加强，只是提供了 按照类型创建对应的StatementHandler(子类)实例的逻辑
 public class RoutingStatementHandler implements StatementHandler {
 
   private final StatementHandler delegate;
@@ -62,16 +63,19 @@ public class RoutingStatementHandler implements StatementHandler {
     return delegate.prepare(connection);
   }
 
+  //实际调用的是Statement/PrepapreStatement/CallableStatement的prepare方法，装饰模式
   @Override
   public void parameterize(Statement statement) throws SQLException {
     delegate.parameterize(statement);
   }
 
+  //实际调用的是Statement/PrepapreStatement/CallableStatement的batch方法，装饰模式
   @Override
   public void batch(Statement statement) throws SQLException {
     delegate.batch(statement);
   }
 
+  //实际调用的是Statement/PrepapreStatement/CallableStatement的update方法，装饰模式
   @Override
   public int update(Statement statement) throws SQLException {
     return delegate.update(statement);

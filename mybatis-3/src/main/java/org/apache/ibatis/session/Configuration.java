@@ -396,6 +396,8 @@ public class Configuration {
   }
 
   public void setDefaultExecutorType(ExecutorType defaultExecutorType) {
+    if (null == defaultExecutorType)
+      throw new IllegalArgumentException("defaultExecutorType can't be null");
     this.defaultExecutorType = defaultExecutorType;
   }
 
@@ -534,8 +536,9 @@ public class Configuration {
   }
 
   /**创建StatementHandler的方法，默认创建的是RoutingStatementHandler,
-   * RoutingStatement内部是装饰器模式，装饰了Statement/PrepareStatement/CallableStatementHandler
-   * 同事RoutingStatement又是工厂模式，根据传入的MppedStatement的statementType属性决定创造哪个类型的StatementHnadler
+   * RoutingStatement内部是装饰器模式，装饰了Statement/PrepareStatement/CallableSt
+   * atementHandler
+   * 同时RoutingStatement又是工厂模式，根据传入的MppedStatement的statementType属性决定创造哪个类型的StatementHnadler
    * {@link RoutingStatementHandler}
    * @param: executor
    * @param: mappedStatement
@@ -559,7 +562,8 @@ public class Configuration {
   public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
     //若未指定executorType，则使用默认的(SimpleExecutor)，否则创建指定类型的Executor todo 这两行代码是否重复了
     executorType = executorType == null ? defaultExecutorType : executorType;
-    //若执行器类型未传入，则默认使用SIMPLE执行器
+    //若默认执行器类型被设置为null，则使用SIMPLE执行器
+    //此处与Apache-Mybatis user工作组的成员进行过沟通，回复我说该问题已经有人提出过了，https://github.com/mybatis/mybatis-3/issues/1799
     executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
     Executor executor;
     if (ExecutorType.BATCH == executorType) {
@@ -569,10 +573,11 @@ public class Configuration {
     } else {
       executor = new SimpleExecutor(this, transaction);
     }
-    //若开启了二级缓存，则会创建CachingExecutor并将上面创建的Executor作为其delegate，返回CachingExecutor
+    //若开启了二级缓存，则会创建CachingExecutor并将上面创建的Executor作为其delegate，返回创建的CachingExecutor
     if (cacheEnabled) {
       executor = new CachingExecutor(executor);
     }
+    //插件扩展拦截逻辑
     executor = (Executor) interceptorChain.pluginAll(executor);
     return executor;
   }
