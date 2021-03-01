@@ -26,6 +26,7 @@ import org.apache.ibatis.cache.Cache;
  *
  * @author Clinton Begin
  */
+//FIFO的缓存
 public class FifoCache implements Cache {
 
   private final Cache delegate;

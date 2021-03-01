@@ -40,7 +40,7 @@ public class PluginTest {
   }
 
   @Intercepts({
-      @Signature(type = Map.class, method = "get", args = {Object.class})})
+          @Signature(type = Map.class, method = "get", args = {Object.class})})
   public static class AlwaysMapPlugin implements Interceptor {
     public Object intercept(Invocation invocation) throws Throwable {
       return "Always";

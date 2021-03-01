@@ -28,8 +28,8 @@ public class InterceptorChain {
   //存放所有拦截器(插件)的集合
   private final List<Interceptor> interceptors = new ArrayList<Interceptor>();
 
-  /**在{@link org.apache.ibatis.session.Configuration}使用工厂模式创建E
-   *  xecutor,StatementHandler,ParameterHandler，Resulthandler时被调用
+  /**在{@link org.apache.ibatis.session.Configuration}使用工厂模式创建
+   * Executor,StatementHandler,ParameterHandler，Resulthandler时被调用
    * 用于扩展mybatis
    * @param: target
    * @Return: java.lang.Object

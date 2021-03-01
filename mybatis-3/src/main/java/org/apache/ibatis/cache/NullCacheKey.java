@@ -18,6 +18,7 @@ package org.apache.ibatis.cache;
 /**
  * @author Clinton Begin
  */
+//null缓存key
 public final class NullCacheKey extends CacheKey {
 
   private static final long serialVersionUID = 3704229911977019465L;

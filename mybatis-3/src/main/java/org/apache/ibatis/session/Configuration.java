@@ -550,6 +550,7 @@ public class Configuration {
    */ 
   public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
     StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
+    //使用interceptorChain中的每个plugin对statementHandler进行拦截，拦截器的处理逻辑
     statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
     return statementHandler;
   }
@@ -850,7 +851,7 @@ public class Configuration {
   //Configuration的内置类，继承自HashMap，对HashMap进行了增强
   //  --增加了put时防重复的处理和get时取不到值时候的异常处理，
   //  这样核心应用层就不需要额外关心各种对象异常处理,简化应用层逻辑
-  // 设计模式--装饰器模式（这种通过继承而非组合的算不算装饰器模式）
+  // 设计模式--装饰器模式（这种通过继承而非组合的算不算装饰器模式？）
   protected static class StrictMap<V> extends HashMap<String, V> {
 
     private static final long serialVersionUID = -4950446264854982944L;

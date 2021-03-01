@@ -47,8 +47,9 @@ public class Plugin implements InvocationHandler {
     Map<Class<?>, Set<Method>> signatureMap = getSignatureMap(interceptor);
     Class<?> type = target.getClass();
     Class<?>[] interfaces = getAllInterfaces(type, signatureMap);
+    //若接口数量大于0
     if (interfaces.length > 0) {
-      //动态代理
+      //创建动态代理对象并返回
       return Proxy.newProxyInstance(
           type.getClassLoader(),
           interfaces,
