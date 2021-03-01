@@ -190,7 +190,7 @@ public class Configuration {
    * references a cache bound to another namespace and the value is the
    * namespace which the actual cache is bound to.
    */
-  //用于存储 <caache-ref/>标签的nameSpace
+  //用于存储 <caache-ref/>标签的nameSpace，存储所有的二级缓存
   // key :  namespace(当前mapper.xml的nameSpace)
   // vlaue： 被绑定的mapper的namespace
   protected final Map<String, String> cacheRefMap = new HashMap<String, String>();
