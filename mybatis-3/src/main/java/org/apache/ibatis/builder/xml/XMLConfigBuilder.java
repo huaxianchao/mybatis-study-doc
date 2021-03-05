@@ -194,10 +194,15 @@ public class XMLConfigBuilder extends BaseBuilder {
   private void pluginElement(XNode parent) throws Exception {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
+        //获取配置的interceptor的类路径
         String interceptor = child.getStringAttribute("interceptor");
+        //获取插件的配置项，封装成Properties
         Properties properties = child.getChildrenAsProperties();
+        //使用反射 通过类路径生成该类实例
         Interceptor interceptorInstance = (Interceptor) resolveClass(interceptor).newInstance();
+        //将上面封装的Properties赋值给interceptorInstance的properties属性
         interceptorInstance.setProperties(properties);
+        //将该插件添加到Configuration的插件列表
         configuration.addInterceptor(interceptorInstance);
       }
     }
