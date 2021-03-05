@@ -131,4 +131,11 @@ public class DebugMainTest {
         sqlSession.commit();
     }
 
+    @Test
+    public void testInteceptor(){
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        System.out.println(userMapper.getById(1));
+    }
+
 }

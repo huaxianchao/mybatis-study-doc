@@ -3,23 +3,32 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+    <!--插件注册-->
+    <plugins>
+        <!--property配置可以省略-->
+        <plugin interceptor="com.hy.plugins.PluginB"></plugin>
+        <plugin interceptor="com.hy.plugins.PluginA"></plugin>
+    </plugins>
 
     <!--设置默认executortype，mybatis中已经设置为SimpleExecutor-->
-   <!-- <settings>
-        <setting name="defaultExecutorType" value="REUSE"/>
-    </settings>-->
+    <!-- <settings>
+         <setting name="defaultExecutorType" value="REUSE"/>
+     </settings>-->
     <environments default="development">
         <environment id="development">
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://localhost:3306/test_study?serverTimezone=GMT%2b8&amp;useUnicode=true&amp;characterEncoding=utf-8"/>
+                <property name="url"
+                          value="jdbc:mysql://localhost:3306/test_study?serverTimezone=GMT%2b8&amp;useUnicode=true&amp;characterEncoding=utf-8"/>
                 <property name="username" value="root"/>
                 <property name="password" value="123456"/>
             </dataSource>
         </environment>
     </environments>
+
     <mappers>
         <mapper resource="com/hy/mapper/UserMapper.xml"/>
     </mappers>
+
 </configuration>
