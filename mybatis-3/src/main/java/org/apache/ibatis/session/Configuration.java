@@ -578,7 +578,7 @@ public class Configuration {
     if (cacheEnabled) {
       executor = new CachingExecutor(executor);
     }
-    //插件扩展拦截逻辑
+    //扩展点，插件逻辑，实际返回的是对executor进行包装了的包含插件逻辑的代理对象
     executor = (Executor) interceptorChain.pluginAll(executor);
     return executor;
   }
