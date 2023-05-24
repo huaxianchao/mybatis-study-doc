@@ -169,7 +169,7 @@ public class Configuration {
   // 类型注册器, 用于在执行sql语句的出入参映射以及mybatis-config文件里的各种配置比如<transactionManager type="JDBC"/><dataSource type="POOLED">时使用简写
   protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
   protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
-  //缓存MappedStatement的Map，key->MappedStatement的id，value->MappedStatement
+  //缓存所有解析的MappedStatement的Map容器，key->MappedStatement的唯一id（nameSpace.statement标签id），value->MappedStatement对象
   protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection");
   //二级缓存列表，key->缓存的id(nameSpace)，value->缓存对象
   protected final Map<String, Cache> caches = new StrictMap<Cache>("Caches collection");
@@ -564,7 +564,7 @@ public class Configuration {
     //若未指定executorType，则使用默认的(SimpleExecutor)，否则创建指定类型的Executor todo 这两行代码是否重复了
     executorType = executorType == null ? defaultExecutorType : executorType;
     //若默认执行器类型被设置为null，则使用SIMPLE执行器
-    //此处与Apache-Mybatis user工作组的成员进行过沟通，回复我说该问题已经有人提出过了，https://github.com/mybatis/mybatis-3/issues/1799
+    //此处与Apache-Mybatis user工作组的成员进行过沟通，回复说该问题已经有人提出过了，https://github.com/mybatis/mybatis-3/issues/1799
     executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
     Executor executor;
     if (ExecutorType.BATCH == executorType) {
@@ -574,11 +574,11 @@ public class Configuration {
     } else {
       executor = new SimpleExecutor(this, transaction);
     }
-    //若开启了二级缓存，则会创建CachingExecutor并将上面创建的Executor作为其delegate，返回创建的CachingExecutor
+    //若开启了二级缓存，则会创建CachingExecutor对象，并将上面创建的Executor对象作为其delegate，返回创建的CachingExecutor对象
     if (cacheEnabled) {
       executor = new CachingExecutor(executor);
     }
-    //扩展点，插件逻辑，实际返回的是对executor进行包装了的包含插件逻辑的代理对象
+    //扩展点，插件逻辑，实际返回的是对executor进行包装了的代理对象，该代理对象包含了插件的逻辑
     executor = (Executor) interceptorChain.pluginAll(executor);
     return executor;
   }

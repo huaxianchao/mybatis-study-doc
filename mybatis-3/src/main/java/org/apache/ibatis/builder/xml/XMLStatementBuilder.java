@@ -34,6 +34,7 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ * mapper.xml中 <insert><update><delete><select>标签的解析器 主要在{@link XMLStatementBuilder#parseStatementNode()}方法
  * @author Clinton Begin
  */
 public class XMLStatementBuilder extends BaseBuilder {
@@ -53,24 +54,32 @@ public class XMLStatementBuilder extends BaseBuilder {
     this.requiredDatabaseId = databaseId;
   }
 
+  /**
+   * 解析<insert><update><delete><select>标签
+   */
   public void parseStatementNode() {
+    //获取id属性
     String id = context.getStringAttribute("id");
     String databaseId = context.getStringAttribute("databaseId");
 
     if (!databaseIdMatchesCurrent(id, databaseId, this.requiredDatabaseId)) {
       return;
     }
-
+    //获取标签的其它属性
     Integer fetchSize = context.getIntAttribute("fetchSize");
     Integer timeout = context.getIntAttribute("timeout");
     String parameterMap = context.getStringAttribute("parameterMap");
+    //参数类型
     String parameterType = context.getStringAttribute("parameterType");
+    //将参数类型由String全限定名转化为Class对象表示
     Class<?> parameterTypeClass = resolveClass(parameterType);
     String resultMap = context.getStringAttribute("resultMap");
+    //返回值类型
     String resultType = context.getStringAttribute("resultType");
     String lang = context.getStringAttribute("lang");
     LanguageDriver langDriver = getLanguageDriver(lang);
 
+    //将返回值类型由String全限定名转化为Class对象表示
     Class<?> resultTypeClass = resolveClass(resultType);
     String resultSetType = context.getStringAttribute("resultSetType");
     StatementType statementType = StatementType.valueOf(context.getStringAttribute("statementType", StatementType.PREPARED.toString()));
@@ -106,6 +115,7 @@ public class XMLStatementBuilder extends BaseBuilder {
           ? new Jdbc3KeyGenerator() : new NoKeyGenerator();
     }
 
+    //构建MappedStatement对象，添加到builderAssistant中
     builderAssistant.addMappedStatement(id, sqlSource, statementType, sqlCommandType,
         fetchSize, timeout, parameterMap, parameterTypeClass, resultMap, resultTypeClass,
         resultSetTypeEnum, flushCache, useCache, resultOrdered, 

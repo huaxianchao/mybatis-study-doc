@@ -17,21 +17,30 @@ package org.apache.ibatis.session;
 
 /**
  * @author Clinton Begin
+ * 用于存储sql的分页信息，只是存储了SQL中limit的两个参数，具体计算和处理的方法不在这里
  */
 public class RowBounds {
 
+  //默认无分页
+
+  //默认的无分页的左偏移量为0
   public static final int NO_ROW_OFFSET = 0;
+  //默认取的最大条数是int类型的最大值
   public static final int NO_ROW_LIMIT = Integer.MAX_VALUE;
+
   public static final RowBounds DEFAULT = new RowBounds();
 
   private int offset;
   private int limit;
 
+
+  //无分页的构造方法
   public RowBounds() {
     this.offset = NO_ROW_OFFSET;
     this.limit = NO_ROW_LIMIT;
   }
 
+  //有分页的构造方法
   public RowBounds(int offset, int limit) {
     this.offset = offset;
     this.limit = limit;

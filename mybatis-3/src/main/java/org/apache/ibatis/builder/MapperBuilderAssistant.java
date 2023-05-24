@@ -50,9 +50,11 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
 /**
+ * 用来构建 {@link MappedStatement} MappedStatement对象的构建助手
+ * 在{@link MapperBuilderAssistant#addMappedStatement}方法中，借助MappedStatementBuilder构建MappedStatement对象并添加到Configuration中
+ * 发
  * @author Clinton Begin
  */
-//MapperBuilder助手
 public class MapperBuilderAssistant extends BaseBuilder {
   //当前命名空间
   private String currentNamespace;
@@ -84,6 +86,11 @@ public class MapperBuilderAssistant extends BaseBuilder {
     this.currentNamespace = currentNamespace;
   }
 
+  /**
+   * MappedStatement对象的id属性设置为nameSpace.statementId
+   *
+   *
+   */
   public String applyCurrentNamespace(String base, boolean isReference) {
     if (base == null) {
       return null;
@@ -105,7 +112,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
     return currentNamespace + "." + base;
   }
 
-  //使用<cache-ref>标签，再解析mapper.xml/注解时，如果有<cache-ref>标签被调用
+  //使用<cache-ref>标签，在解析mapper.xml/注解时，如果有<cache-ref>标签被调用
   public Cache useCacheRef(String namespace) {
     if (namespace == null) {
       throw new BuilderException("cache-ref element requires a namespace attribute.");
@@ -284,6 +291,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
     id = applyCurrentNamespace(id, false);
     boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
 
+    //借助MappedStatement的内部类Builder，构建MappedStatement对象
     MappedStatement.Builder statementBuilder = new MappedStatement.Builder(configuration, id, sqlSource, sqlCommandType)
         .resource(resource)
         .fetchSize(fetchSize)
@@ -308,6 +316,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
     }
 
     MappedStatement statement = statementBuilder.build();
+    //添加到Configuration全局配置中
     configuration.addMappedStatement(statement);
     return statement;
   }
