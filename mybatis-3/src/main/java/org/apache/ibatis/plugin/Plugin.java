@@ -31,8 +31,11 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 //插件类，实现了InvocationHandler接口，用于实现动态代理
 public class Plugin implements InvocationHandler {
 
+  //被代理的对象
   private Object target;
+  //自定义的拦截器
   private Interceptor interceptor;
+  //要拦截的方法的方法签名
   private Map<Class<?>, Set<Method>> signatureMap;
 
   //构造方法
@@ -71,15 +74,19 @@ public class Plugin implements InvocationHandler {
     }
   }
 
-  //获取签名的map
+  //获取Interceptor的@Interceps注解属性，封装成Map
   private static Map<Class<?>, Set<Method>> getSignatureMap(Interceptor interceptor) {
+    //获取interceptor属性的类注解
     Intercepts interceptsAnnotation = interceptor.getClass().getAnnotation(Intercepts.class);
     // issue #251
+    //若自定义注解但是没有@Interceps注解，抛出异常提示信息
     if (interceptsAnnotation == null) {
       throw new PluginException("No @Intercepts annotation was found in interceptor " + interceptor.getClass().getName());      
     }
+    //获取@Interceps的属性数组
     Signature[] sigs = interceptsAnnotation.value();
     Map<Class<?>, Set<Method>> signatureMap = new HashMap<Class<?>, Set<Method>>();
+    //遍历数组
     for (Signature sig : sigs) {
       Set<Method> methods = signatureMap.get(sig.type());
       if (methods == null) {
