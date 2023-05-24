@@ -48,6 +48,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
 /**
+ * xxxMapper.xml文件解析构建工具类,重点在 {@link   XMLMapperBuilder#parse()}方法
  * @author Clinton Begin
  */
 public class XMLMapperBuilder extends BaseBuilder {
@@ -88,9 +89,15 @@ public class XMLMapperBuilder extends BaseBuilder {
   }
 
   public void parse() {
+    //从Configuration的Set集合（属性名loadedResources）中查找resource,判断是否解析过
+    //若已经解析过，则不进行二次解析
     if (!configuration.isResourceLoaded(resource)) {
+      //从根节点开始解析
       configurationElement(parser.evalNode("/mapper"));
+
+      //添加到Configuration的Set集合中，
       configuration.addLoadedResource(resource);
+      //绑定namespace
       bindMapperForNamespace();
     }
 
@@ -103,30 +110,47 @@ public class XMLMapperBuilder extends BaseBuilder {
     return sqlFragments.get(refid);
   }
 
+
   private void configurationElement(XNode context) {
+    //此时传入的参数是mapper根节点
     try {
+      //获取mapper节点的nameSpace属性
       String namespace = context.getStringAttribute("namespace");
+      //校验nameSpace不能为空，否则抛出异常
       if (namespace == null || namespace.equals("")) {
         throw new BuilderException("Mapper's namespace cannot be empty");
       }
+      //将nameSpace赋值到MappedStatement对象中
       builderAssistant.setCurrentNamespace(namespace);
+      //解析cache-ref属性
       cacheRefElement(context.evalNode("cache-ref"));
+      //解析cache属性
       cacheElement(context.evalNode("cache"));
+      //解析parameterMap
       parameterMapElement(context.evalNodes("/mapper/parameterMap"));
       resultMapElements(context.evalNodes("/mapper/resultMap"));
       sqlElement(context.evalNodes("/mapper/sql"));
+      //解析select|insert|update|delete节点，这个是重点
       buildStatementFromContext(context.evalNodes("select|insert|update|delete"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing Mapper XML. Cause: " + e, e);
     }
   }
 
+  /**
+   * 构建所有增删改查标签对应的MappedStatement对象，并添加到Configuration中
+   * 参数List<XNode> list：<select><insert><update><delete>标签eval后的节点对象集合
+   */
   private void buildStatementFromContext(List<XNode> list) {
     if (configuration.getDatabaseId() != null) {
       buildStatementFromContext(list, configuration.getDatabaseId());
     }
     buildStatementFromContext(list, null);
   }
+
+  /*
+   * 构建所有增删改查标签对应的MappedStatement对象，并添加到Configuration中
+   */
 
   private void buildStatementFromContext(List<XNode> list, String requiredDatabaseId) {
     for (XNode context : list) {
@@ -408,10 +432,12 @@ public class XMLMapperBuilder extends BaseBuilder {
   }
 
   private void bindMapperForNamespace() {
+    //获取当前的namespace
     String namespace = builderAssistant.getCurrentNamespace();
     if (namespace != null) {
       Class<?> boundType = null;
       try {
+        //根据namespace获取mapper接口
         boundType = Resources.classForName(namespace);
       } catch (ClassNotFoundException e) {
         //ignore, bound type is not required

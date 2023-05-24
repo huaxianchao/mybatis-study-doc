@@ -31,9 +31,9 @@ import java.util.Set;
  * @author Eduardo Macarron
  * @author Lasse Voss
  */
-//mapper注册器，把Mapper注册进内置的HashMap中，key->Class，value->MapperProxy工厂
+  //mapper注册器，把Mapper注册进内置的HashMap中，key->Class，value->MapperProxyFactory
   //说明每个mapper接口都有一个对应的MapperProxyFactory，是工厂方法模式
-  //将mapper存储到容器中，以后用直接从容器中取出，享元模式
+  //将mapper存储到容器中，以后用直接从容器中取出，享元模式的体现
 public class MapperRegistry {
 
     private final Configuration config;
@@ -47,11 +47,11 @@ public class MapperRegistry {
   /**获取mapper --实际返回的是该mapper的代理
    * @param: type --接口对应的Class 实例
    * @param: sqlSession
-   * @Return: T  该mapper的MapperProxy，使用MapperProxyFactory生成
+   * @Return: T  该mapper接口的动态代理MapperProxy，使用MapperProxyFactory生成
    */ 
   @SuppressWarnings("unchecked")
   public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
-    //从容器中查询
+    //从容器中根据Mapper接口查询MapperProxyFactory
     final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
     //若容器中不存在，抛出异常（因为程序启动时就会把所有Mapper加载到容器中）
     if (mapperProxyFactory == null) {
