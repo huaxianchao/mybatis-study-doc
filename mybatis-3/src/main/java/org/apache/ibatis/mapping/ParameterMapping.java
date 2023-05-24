@@ -30,7 +30,7 @@ public class ParameterMapping {
 
   //环境配置
   private Configuration configuration;
-
+  //取的实体属性名
   private String property;
   private ParameterMode mode;
   //对应的java类型，默认是Object类型

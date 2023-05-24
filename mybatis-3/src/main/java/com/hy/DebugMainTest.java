@@ -19,14 +19,15 @@ public class DebugMainTest {
 
     public static void main(String[] args) {
         //xml方式启动
-        String resource = "mybatis-config.xml";
+        String resource = "com/hy/mybatis-config.xml";
         InputStream inputStream = null;
         try {
+            //加载配置文件，但未进行解析
             inputStream = Resources.getResourceAsStream(resource);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //获取SqlsessionFactory
+        //通过Builder模式，获取SqlsessionFactory
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
         //获取session
         SqlSession sqlSession = sqlSessionFactory.openSession();

@@ -333,8 +333,10 @@ public abstract class BaseExecutor implements Executor {
     try {
       list = doQuery(ms, parameter, rowBounds, resultHandler, boundSql);
     } finally {
+      //从缓存中删除
       localCache.removeObject(key);
     }
+    //添加到缓存中
     localCache.putObject(key, list);
     if (ms.getStatementType() == StatementType.CALLABLE) {
       localOutputParameterCache.putObject(key, parameter);

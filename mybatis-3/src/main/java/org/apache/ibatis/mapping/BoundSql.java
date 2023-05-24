@@ -39,9 +39,9 @@ import org.apache.ibatis.session.Configuration;
  */ 
 public class BoundSql {
 
-  //SQL字符串，可能包含 占位符"？"
+  //预编译的SQL字符串，包含占位符"？"
   private String sql;
-  //参数映射集
+  //参数映射集，是有序的，对应sql的？
   private List<ParameterMapping> parameterMappings;
   //参数对象
   private Object parameterObject;
