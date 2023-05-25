@@ -29,6 +29,7 @@ import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ * Mybatis中SqlSource的默认实现类
  * @author Eduardo Macarron
  */
 public class XMLLanguageDriver implements LanguageDriver {

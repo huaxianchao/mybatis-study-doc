@@ -98,9 +98,10 @@ public class XMLStatementBuilder extends BaseBuilder {
 
     // Parse selectKey after includes and remove them.
     processSelectKeyNodes(id, parameterTypeClass, langDriver);
-    
-    // Parse the SQL (pre: <selectKey> and <include> were parsed and removed)
+
+    //重点创建SqlSource对象，并开始mapper.xml文件中动态SQL的解析
     SqlSource sqlSource = langDriver.createSqlSource(configuration, context, parameterTypeClass);
+
     String resultSets = context.getStringAttribute("resultSets");
     String keyProperty = context.getStringAttribute("keyProperty");
     String keyColumn = context.getStringAttribute("keyColumn");

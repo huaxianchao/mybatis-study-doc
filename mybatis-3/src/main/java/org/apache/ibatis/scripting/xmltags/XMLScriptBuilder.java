@@ -87,6 +87,7 @@ public class XMLScriptBuilder extends BaseBuilder {
     return contents;
   }
 
+  //将sql动态标签处理器注册
   NodeHandler nodeHandlers(String nodeName) {
     Map<String, NodeHandler> map = new HashMap<String, NodeHandler>();
     map.put("trim", new TrimHandler());
