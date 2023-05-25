@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.cache.impl.PerpetualCache;
+import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.logging.jdbc.ConnectionLogger;
@@ -327,16 +328,21 @@ public abstract class BaseExecutor implements Executor {
     }
   }
 
+  /**
+   * 从数据库查询数据，经历一级缓存
+   * 实际调用JDBC底层代码 从doQuery到{@link SimpleExecutor#prepareStatement}方法中
+   */
   private <E> List<E> queryFromDatabase(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
     List<E> list;
     localCache.putObject(key, EXECUTION_PLACEHOLDER);
     try {
+      //实际从数据库中查询的流程
       list = doQuery(ms, parameter, rowBounds, resultHandler, boundSql);
     } finally {
-      //从缓存中删除
+      //从一级缓存中删除
       localCache.removeObject(key);
     }
-    //添加到缓存中
+    //添加到一级缓存中
     localCache.putObject(key, list);
     if (ms.getStatementType() == StatementType.CALLABLE) {
       localOutputParameterCache.putObject(key, parameter);
