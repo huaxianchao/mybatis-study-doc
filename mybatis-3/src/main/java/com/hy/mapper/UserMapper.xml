@@ -6,6 +6,16 @@
     <!--二级缓存的缓存空间，若不添加则二级缓存不会生效-->
     <cache></cache>
     <select id="getById" resultType="com.hy.VO.User">
-    select * from user where id = #{id}
-  </select>
+        select *
+        from user
+        where id = #{id}
+    </select>
+
+    <select id="getByCondition" resultType="com.hy.VO.User">
+        select *
+        from user
+        where id = #{id}
+          and name = #{name}
+    </select>
+
 </mapper>

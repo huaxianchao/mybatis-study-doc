@@ -11,8 +11,10 @@ import org.apache.ibatis.annotations.Update;
  */
 public interface UserMapper {
 
-    public User getById(int id);
+    User getById(int id);
+
+    User getByCondition(User user);
 
     @Update("update user set name = #{name},age = #{age} where id = #{id}")
-    public void update(User user);
+    void update(User user);
 }

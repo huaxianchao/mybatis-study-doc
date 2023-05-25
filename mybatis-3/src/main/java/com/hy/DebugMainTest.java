@@ -35,8 +35,11 @@ public class DebugMainTest {
         UserMapper mapper = sqlSession.getMapper(UserMapper.class);
         UserMapper mapper2 = sqlSession.getMapper(UserMapper.class);
         System.out.println(mapper.equals(mapper2));
-        User user = mapper.getById(1);
-        System.out.println(user);
+        User user = new User();
+        user.setId(1);
+        user.setName("华阳");
+        User res = mapper.getByCondition(user);
+        System.out.println(res);
     }
 
 }
